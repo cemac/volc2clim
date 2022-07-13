@@ -1,0 +1,17 @@
+{% extends 'site.html.j2' %}
+{%- block content %}
+        <div class="flex_row_wrap flex_no_grow">
+          <div class="content_overview_heading">
+            Error
+          </div>
+        </div>
+        <div id="content_overview"
+             class="flex_row_wrap flex_justify">
+          <div id="content_overview_text"
+               class="content_text flex_column flex_400">
+            <p>
+              {{ error }}
+            </p>
+          </div>
+        </div>
+{%- endblock %}

@@ -1,0 +1,160 @@
+/* plots, inputs and plot containiners: */
+
+.content_model_inputs,
+.content_plots {
+  margin-left: 1em;
+  margin-right: 1em;
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+}
+
+.content_model_input {
+  margin: 0.3em;
+}
+
+.input_label {
+  background-color: #f7f9fb;
+  min-width: 22em;
+  padding: 0.5em;
+  margin: 0.5em;
+}
+
+@media only screen and (max-width: 400px) {
+  .input_label {
+    min-width: 95%;
+  }
+}
+
+.input_value {
+  min-width: 14em;
+  padding: 0.5em;
+  margin: 0.5em;
+  text-align: right;
+}
+
+#month_input_value {
+  min-width: 15.5em;
+}
+
+.input_text {
+  border-width: 0.1em;
+  border-color: #989898;
+}
+
+.input_error {
+  display: none;
+  color: #ee3333;
+  padding: 0.5em;
+  margin: 0.5em;
+}
+
+.run_button {
+  font-size: 1.1em;
+  color: #eeeeee;
+  background-color: #2488cb;
+  border: 1px solid #2488cb;
+  padding: 0.5em;
+  margin: 0.5em;
+  cursor: pointer;
+}
+
+.run_button:focus,
+.run_button:active,
+.run_button:hover {
+  background-color: #3498eb;
+  border: 1px solid #3498eb;
+}
+
+.run_button:disabled, .run_button[disabled] {
+  color: #999999;
+  background-color: #e9e9e9;
+  border: 1px solid #e9e9e9;
+  cursor: auto;
+}
+
+.content_model_spinner {
+  display: none;
+  height: 2.1em;
+  padding: 0.3em;
+  margin: 0.5em;
+  margin-left: 2.5em;
+}
+
+.content_plots {
+  max-height: 5%;
+}
+
+.content_plot_box {
+  height: 0;
+  overflow: hidden;
+  padding-top: 45%;
+  position: relative;
+}
+
+.content_plot {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* adjust plots depending on page size: */
+
+@media only screen and (max-width: 750px) {
+  #saod_ts_plot_box, #saod_contour_plot_box,
+  #fair_rf_ts_plot_box, #fair_temp_ts_plot_box {
+    -webkit-flex-basis: 51%;
+    -moz-flex-basis: 51%;
+    -ms-flex-basis: 51%;
+    flex-basis: 51%;
+    padding-top: 85%;
+  }
+}
+
+/* statistics elements: */
+
+.content_model_stats {
+  margin-top: 2em;
+  margin-left: 2em;
+}
+
+.model_stats_label {
+  font-weight: 500;
+}
+
+.model_stats_value {
+  font-weight: 300;
+}
+
+/* data download elements: */
+
+.data_download {
+  margin-top: 2em;
+  margin-left: 1em;
+}
+
+.data_download_button {
+  font-size: 1.1em;
+  color: #eeeeee;
+  background-color: #2488cb;
+  border: 1px solid #2488cb;
+  padding: 0.5em;
+  margin: 0.5em;
+  cursor: pointer;
+}
+
+.data_download_button:focus,
+.data_download_button:active,
+.data_download_button:hover {
+  background-color: #3498eb;
+  border: 1px solid #3498eb;
+}
+
+.data_download_button:disabled,
+.data_download_button[disabled] {
+  color: #999999;
+  background-color: #e9e9e9;
+  border: 1px solid #e9e9e9;
+  cursor: auto;
+}

@@ -1,0 +1,35 @@
+{% extends 'site.html.j2' %}
+{%- block header_img %}
+        {% if current_page is defined and header_img is sameas true -%}
+        <div id="content_header"
+             class="content_header">
+          <img src="{{ url_for('static', filename='img/banner/{0}.jpg'.format(current_page)) }}"
+               class="content_header_img"
+               alt=""
+               title="">
+          <div id="content_header_image_text"
+               class="content_header_image_text flex_row flex_end">
+            Image credit
+          </div>
+        </div>
+        {%- endif -%}
+{%- endblock %}
+{%- block content %}
+        <div class="flex_row_wrap flex_no_grow">
+          <div class="content_overview_heading">
+            About
+          </div>
+        </div>
+        <div id="content_overview"
+             class="flex_row_wrap flex_justify">
+          <div class="content_text flex_column">
+            Some information goes here ...
+          </div>
+        </div>
+        <div id="content_overview"
+             class="flex_row_wrap flex_justify">
+          <div class="content_text flex_column">
+{% include "references.html.j2" %}
+          </div>
+        </div>
+{%- endblock %}

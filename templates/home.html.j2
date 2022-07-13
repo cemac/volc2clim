@@ -1,0 +1,275 @@
+{% extends 'site.html.j2' %}
+{%- block css %}
+    <!-- local style: -->
+    <link rel="stylesheet"
+          type="text/css"
+          href="{{ url_for('static', filename='css/home.css') }}"
+          media="all">
+{%- endblock %}
+{%- block js %}
+    <!-- plotly plotting: -->
+    <script src="https://cdn.plot.ly/plotly-cartesian-2.12.1.min.js"
+            charset="utf-8">
+    </script>
+    <!-- page set up / functions: -->
+    <script src="{{ url_for('static', filename='js/home.js') }}"
+            charset="utf-8"
+            defer>
+    </script>
+{%- endblock %}
+{%- block header_img %}
+        {% if current_page is defined and header_img is sameas true -%}
+        <div id="content_header"
+             class="content_header">
+          <img src="{{ url_for('static', filename='img/banner/{0}.jpg'.format(current_page)) }}"
+               class="content_header_img"
+               alt=""
+               title="">
+          <div id="content_header_image_text"
+               class="content_header_image_text flex_row flex_end">
+            Image credit
+          </div>
+        </div>
+        {%- endif -%}
+{%- endblock %}
+{%- block content %}
+        <div class="flex_row_wrap flex_no_grow">
+          <div class="content_overview_heading">
+            Home
+          </div>
+        </div>
+        <div id="content_overview"
+             class="flex_row_wrap flex_justify">
+          <div class="content_text flex_column">
+            Some information goes here ...
+          </div>
+        </div>
+        <div class="content_text flex_column">
+          <h4>Eruption source parameters</h4>
+        </div>
+        <div id="content_model_inputs"
+             class="content_model_inputs flex_column flex_grow">
+          <div id="so2_mass_input"
+               class="content_model_input flex_row_wrap">
+            <label id="so2_mass_input_label"
+                   class="input_label">
+              Mass of SO₂ (Tg)
+            </label>
+            <input id="so2_mass_input_value"
+                   class="input_text input_value"
+                   type="text"
+                   maxlength="10"
+                   name="so2_mass"
+                   value="18">
+          </div>
+          <div id="so2_mass_input_error"
+               class="input_error">
+          </div>
+          <div id="lat_input"
+               class="content_model_input flex_row_wrap">
+            <label id="lat_input_label"
+                   class="input_label">
+              Volcano latitude (° North)
+            </label>
+            <input id="lat_input_value"
+                   class="input_text input_value"
+                   type="text"
+                   maxlength="10"
+                   name="lat"
+                   value="15.1">
+          </div>
+          <div id="lat_input_error"
+               class="input_error">
+          </div>
+          <div id="year_input"
+               class="content_model_input flex_row_wrap">
+            <label id="lat_input_label"
+                   class="input_label">
+              Eruption year
+            </label>
+            <input id="year_input_value"
+                   class="input_text input_value"
+                   type="text"
+                   maxlength="10"
+                   name="lat"
+                   value="2021">
+          </div>
+          <div id="year_input_error"
+               class="input_error">
+          </div>
+          <div id="month_input"
+               class="content_model_input flex_row_wrap">
+            <label id="month_input_label"
+                   class="input_label">
+              Eruption month
+            </label>
+            <select id="month_input_value"
+                    class="input_select input_value">
+              <option value="0" selected>January</option>
+              <option value="1">February</option>
+              <option value="2">March</option>
+              <option value="3">April</option>
+              <option value="4">May</option>
+              <option value="5">June</option>
+              <option value="6">July</option>
+              <option value="7">August</option>
+              <option value="8">September</option>
+              <option value="9">October</option>
+              <option value="10">November</option>
+              <option value="11">December</option>
+            </select>
+          </div>
+          <div id="so2_height_input"
+               class="content_model_input flex_row_wrap">
+            <label id="so2_height_input_label"
+                   class="input_label">
+              SO₂ injection height (km asl)
+            </label>
+            <input id="so2_height_input_value"
+                   class="input_text input_value"
+                   type="text"
+                   maxlength="10"
+                   name="so2_height"
+                   value="25">
+          </div>
+          <div id="so2_height_input_error"
+               class="input_error">
+          </div>
+          <div id="tropo_height_input"
+               class="content_model_input flex_row_wrap">
+            <label id="tropo_height_input_label"
+                   class="input_label">
+              Tropopause height at volcano (km asl)
+            </label>
+            <input id="tropo_height_input_value"
+                   class="input_text input_value"
+                   type="text"
+                   maxlength="10"
+                   name="tropo_height"
+                   value="16">
+          </div>
+          <div id="tropo_height_input_error"
+               class="input_error">
+          </div>
+          <div id="so2_timescale_input"
+               class="content_model_input flex_row_wrap">
+            <label id="so2_timescale_input_label"
+                   class="input_label">
+              SO₂ production timescale (months)
+            </label>
+            <input id="so2_timescale_input_value"
+                   class="input_text input_value"
+                   type="text"
+                   maxlength="10"
+                   name="so2_timescale"
+                   value="8">
+          </div>
+          <div id="so2_timescale_input_error"
+               class="input_error">
+          </div>
+          <div id="scale_factor_input"
+               class="content_model_input flex_row_wrap">
+            <label id="scale_factor_input_label"
+                   class="input_label">
+              Scale factor
+            </label>
+            <input id="scale_factor_input_value"
+                   class="input_text input_value"
+                   type="text"
+                   maxlength="10"
+                   name="scale_factor"
+                   value="-24">
+          </div>
+          <div id="scale_factor_input_error"
+               class="input_error">
+          </div>
+          <div id="run_model"
+                class="content_input flex_row">
+            <button id="run_model_button"
+                    class="run_button">
+              run model
+            </button>
+            <img id="content_model_spinner"
+                 class="content_model_spinner"
+                 src="{{ url_for('static', filename='img/home/spinner.gif') }}">
+          </div>
+        </div>
+        <div id="content_plots">
+          <div id="content_eva_plots"
+               class="content_plots flex_row_wrap flex_justify
+                      flex_grow">
+            <div id="saod_ts_plot_box"
+                 class="content_plot_box flex_half flex_grow">
+              <div id="saod_ts_plot"
+                   class="content_plot">
+              </div>
+            </div>
+            <div id="saod_contour_plot_box"
+                 class="content_plot_box flex_half flex_grow">
+              <div id="saod_contour_plot"
+                   class="content_plot">
+              </div>
+            </div>
+          </div>
+          <div id="content_fair_plots"
+               class="content_plots flex_row_wrap flex_justify flex_grow">
+            <div id="fair_rf_ts_plot_box"
+                 class="content_plot_box flex_half flex_grow">
+              <div id="fair_rf_ts_plot"
+                   class="content_plot">
+              </div>
+            </div>
+            <div id="fair_temp_ts_plot_box"
+                 class="content_plot_box flex_half flex_grow">
+              <div id="fair_temp_ts_plot"
+                   class="content_plot">
+              </div>
+            </div>
+          </div>
+          <div id="content_model_stats"
+               class="content_model_stats flex_column">
+            <div id="saod_380_stats"
+                 class="model_stats">
+              <label id="stats_saod_380_peak_label"
+                     class="model_stats_label"></label>
+              <span id="stats_saod_380_peak_value"
+                    class="model_stats_value"></span>
+            </div>
+            <div id="saod_550_stats"
+                 class="model_stats">
+              <label id="stats_saod_550_peak_label"
+                     class="model_stats_label"></label>
+              <span id="stats_saod_550_peak_value"
+                    class="model_stats_value"></span>
+            </div>
+            <div id="saod_1020_stats"
+                 class="model_stats">
+              <label id="stats_saod_1020_peak_label"
+                     class="model_stats_label"></label>
+              <span id="stats_saod_1020_peak_value"
+                    class="model_stats_value"></span>
+            </div>
+            <div id="rf_stats"
+                 class="model_stats">
+              <label id="stats_rf_peak_label"
+                     class="model_stats_label"></label>
+              <span id="stats_rf_peak_value"
+                    class="model_stats_value"></span>
+            </div>
+            <div id="fair_temp_stats"
+                 class="model_stats">
+              <label id="stats_fair_temp_peak_label"
+                     class="model_stats_label"></label>
+              <span id="stats_fair_temp_peak_value"
+                    class="model_stats_value"></span>
+            </div>
+          </div>
+          <div id="data_download"
+               class="data_download">
+            <button id="data_download_button"
+                    class="data_download_button">
+              download csv data
+            </button>
+          </div>
+        </div>
+{%- endblock %}

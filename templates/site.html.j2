@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<!-- html start: __________________________________________________________ -->
+<html>
+  <!-- head start:_________________________________________________________ -->
+  <head>
+    <meta http-equiv="content-type"
+          content="text/html; charset=utf-8">
+    <meta name="viewport"
+          content="width=device-width,initial-scale=1">
+    <link rel="icon"
+          href="{{ url_for('static', filename='img/icon/icon.png') }}"
+          sizes="192x192">
+    <!-- title: ___________________________________________________________ -->
+    <title>Volcanic forcing and climate response - {{ current_page }}{% if page_title is defined %} - {{ page_title }}{% endif %}</title>
+    <!-- styles: __________________________________________________________ -->
+    {%- block css %}{% endblock %}
+    <!-- site style: -->
+    <link rel="stylesheet"
+          type="text/css"
+          href="{{ url_for('static', filename='css/site.css') }}"
+          media="all">
+    <!-- scripts: _________________________________________________________ -->
+    {%- block js %}{% endblock %}
+    <!-- site js: -->
+    <script src="{{ url_for('static', filename='js/site.js') }}"
+            charset="utf-8"
+            defer>
+    </script>
+  <!-- head end:___________________________________________________________ -->
+  </head>
+  <!-- body start: ________________________________________________________ -->
+  <body>
+    <!-- container start: _________________________________________________ -->
+    <div id="container"
+         class="container flex_column">
+      <!-- header: ________________________________________________________ -->
+      <div id="header"
+           class="header flex_row flex_start flex_no_grow">
+        <div id="header_logo"
+             class="header_logo">
+          <img id="header_logo_img_small"
+               alt=""
+               title=""
+               class="header_logo_img"
+               src="{{ url_for('static', filename='img/header/logo.png') }}">
+          <img id="header_logo_img"
+               alt=""
+               title=""
+               class="header_logo_img"
+               src="{{ url_for('static', filename='img/header/logo.png') }}">
+        </div>
+        <div id="header_text"
+             class="header_text">
+          Volcanic forcing and climate response
+        </div>
+      </div>
+      <!-- navigation: ____________________________________________________ -->
+      <div id="navigation"
+           class="navigation flex_row flex_no_grow">
+        <div id="navigation_text"
+             class="navigation_text flex_row flex_start">
+          <div class="navigation_item{% if current_page == 'home' %} navigation_item_current{% endif %}">
+            <a {% if current_page == 'home' %}class="navigation_text_current"
+               {% endif %}href="/"
+               title="Home">Home</a>
+          </div>
+          <div class="navigation_item{% if current_page == 'about' %} navigation_item_current{% endif %}">
+            <a {% if current_page == 'about' %}class="navigation_text_current"
+               {% endif %}href="/about"
+               title="About">About</a>
+          </div>
+        </div>
+        <div id="navigation_menu"
+             class="navigation_menu">
+          <img id="navigation_menu_img"
+               alt=""
+               class="navigation_menu_img"
+               src="{{ url_for('static', filename='img/navigation/menu.png') }}">
+        </div>
+      </div>
+      <!-- content: _______________________________________________________ -->
+      <div id="content"
+           class="content flex_column">
+        <!-- header image: ________________________________________________ -->
+        {%- block header_img %}{% endblock %}
+        <!-- page content: ________________________________________________ -->
+        {%- block content %}{% endblock %}
+        <span class="content_vertical_space_2"></span>
+      </div>
+      <!-- full screen image div: _________________________________________ -->
+      <div id="fs_img_div"
+           class="fs_img_div">
+        <span id="fs_img_close"
+              class="fs_img_close">&times;</span>
+        <img id="fs_img_img"
+             class="fs_img_img"
+             src="">
+      </div>
+      <!-- footer: ________________________________________________________ -->
+      <div id="footer"
+           class="footer flex_row_wrap flex_justify flex_no_grow">
+        <p></p>
+      </div>
+      <div id="footer_text"
+           class="footer_text flex_row_wrap flex_center flex_no_grow">
+        <p></p>
+      </div>
+    <!-- container end: ___________________________________________________ -->
+    </div>
+  <!-- body end: __________________________________________________________ -->
+  </body>
+<!-- html end: ____________________________________________________________ -->
+</html>
