@@ -879,15 +879,17 @@ function display_stats() {
    * with and without eruption:
    */
   var fair_temp_max_diff = -999999;
+  var fair_temp_peak_value = null;
   var fair_temp_peak_index = null;
   for (var i = 1; i < fair_temp.length; i++) {
     var my_diff = Math.abs(fair_temp_wo[i] - fair_temp[i]);
     if (my_diff > fair_temp_max_diff) {
       fair_temp_max_diff = my_diff;
+      fair_temp_peak_value = fair_temp[i] - fair_temp_wo[i];
       fair_temp_peak_index = i;
     };
   };
-  var fair_temp_peak_value = fair_temp_max_diff.toFixed(6);
+  var fair_temp_peak_value = fair_temp_peak_value.toFixed(6);
   var fair_temp_peak_date = fair_year[fair_temp_peak_index];
   /* update html elements: */
   stats_els['saod_380_peak_label'].innerHTML = 'Peak monthly SAOD at 380nm:';
