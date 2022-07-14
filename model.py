@@ -84,6 +84,8 @@ def __run_model(eva_h_dir, user_params):
     )
     # model run time in years:
     run_years = 5
+    # subtract 1 from month value, so january = 0:
+    user_params['month'] -= 1
     # add eruption year to months:
     user_params['month'] += (user_params['year'] * 12)
     # time span in months. run for five years, starting from lowest eruption

@@ -9,7 +9,7 @@ var model_url = '/model';
 var model_params = {
   'lat': 15.1,
   'year': 2021,
-  'month': 6,
+  'month': 1,
   'so2_mass': 18,
   'so2_height': 25,
   'tropo_height': 16,
