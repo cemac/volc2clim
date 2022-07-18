@@ -185,7 +185,7 @@ function validate_text_input() {
     so2_mass_el.style.borderColor = input_border_err;
   };
   /* if so2 mass i greater than 200, add message: */
-  if (so2_mass_value > 20) {
+  if ((model_params_ok == true) && (so2_mass_value > 20)) {
     so2_mass_error_el.innerHTML += ' We have a limited understanding of' +
                                    ' eruptions injecting >20 Tg SO2';
     so2_mass_error_el.style.display = 'inline';
