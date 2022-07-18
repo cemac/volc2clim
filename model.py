@@ -44,7 +44,7 @@ def check_params(request_params):
         {'name': 'so2_height', 'type': float},
         {'name': 'tropo_height', 'type': float},
         {'name': 'so2_timescale', 'type': float},
-        {'name': 'scale_factor', 'type': float}
+        {'name': 'rad_eff', 'type': float}
     ]
     # init output dict:
     user_params = {}
@@ -149,8 +149,8 @@ def __run_model(eva_h_dir, user_params):
     # saod 550 to 6 decimal places:
     model_saod_550 = np.round((saod[:, :, 1]).T, 6).tolist()
     # radiative forcing is model_saod_550_ts multiplied by negative scaling
-    # factor:
-    model_rf = user_params['scale_factor'] * model_saod_550_ts
+    # factor (radiative efficiency):
+    model_rf = user_params['rad_eff'] * model_saod_550_ts
     # get annual global mean rf values for fair. get year for each time step:
     all_model_years = np.array([
         np.floor(i) for i in model_time_years

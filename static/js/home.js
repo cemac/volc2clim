@@ -14,7 +14,7 @@ var model_params = {
   'so2_height': 25,
   'tropo_height': 16,
   'so2_timescale': 8,
-  'scale_factor': -21.5
+  'rad_eff': -21.5
 };
 /* variable to indicate if parameters are o.k.: */
 var model_params_ok = true;
@@ -33,8 +33,8 @@ var input_els = {
   'tropo_height_error': document.getElementById('tropo_height_input_error'),
   'so2_timescale': document.getElementById('so2_timescale_input_value'),
   'so2_timescale_error': document.getElementById('so2_timescale_input_error'),
-  'scale_factor': document.getElementById('scale_factor_input_value'),
-  'scale_factor_error': document.getElementById('scale_factor_input_error'),
+  'rad_eff': document.getElementById('rad_eff_input_value'),
+  'rad_eff_error': document.getElementById('rad_eff_input_error'),
   'run_button': document.getElementById('run_model_button'),
   'run_button_display': null,
   'data_download_button': document.getElementById('data_download_button')
@@ -291,25 +291,25 @@ function validate_text_input() {
     so2_timescale_error_el.style.display = 'inline';
     so2_timescale_el.style.borderColor = input_border_err;
   };
-  /* scale factor ... get value: */
-  var scale_factor_el = input_els['scale_factor'];
-  var scale_factor_value = scale_factor_el.value;
+  /* radiate efficiency / scale factor ... get value: */
+  var rad_eff_el = input_els['rad_eff'];
+  var rad_eff_value = rad_eff_el.value;
   /* error element: */
-  var scale_factor_error_el = input_els['scale_factor_error'];
-  scale_factor_error_el.innerHTML = '';
+  var rad_eff_error_el = input_els['rad_eff_error'];
+  rad_eff_error_el.innerHTML = '';
   /* check value: */
-  var check_value = check_numeric('Scale factor', scale_factor_value, -50, -0.1);
+  var check_value = check_numeric('Scale factor', rad_eff_value, -50, -0.1);
   /* if o.k., store value: */
   if (check_value['status'] == true) {
-    model_params['scale_factor'] = parseFloat(scale_factor_value);
-    scale_factor_error_el.style.display = 'none';
-    scale_factor_el.style.borderColor = input_border_ok;
+    model_params['rad_eff'] = parseFloat(rad_eff_value);
+    rad_eff_error_el.style.display = 'none';
+    rad_eff_el.style.borderColor = input_border_ok;
   } else {
     /* not o.k.: */
     model_params_ok = false;
-    scale_factor_error_el.innerHTML = check_value['message'];
-    scale_factor_error_el.style.display = 'inline';
-    scale_factor_el.style.borderColor = input_border_err;
+    rad_eff_error_el.innerHTML = check_value['message'];
+    rad_eff_error_el.style.display = 'inline';
+    rad_eff_el.style.borderColor = input_border_err;
   };
   /* if parameters o.k., enable button: */
   if (model_params_ok == true) {
@@ -945,7 +945,7 @@ function __run_model(model_params) {
                    'so2_height=' + model_params['so2_height'] + '&' +
                    'tropo_height=' + model_params['tropo_height'] + '&' +
                    'so2_timescale=' + model_params['so2_timescale'] + '&' +
-                   'scale_factor=' + model_params['scale_factor'];
+                   'rad_eff=' + model_params['rad_eff'];
   /* request error function: */
   function model_req_error() {
     console.log('* model error');
