@@ -1029,7 +1029,7 @@ async function get_csv_data() {
   /* create zip write object: */
   const zip_writer = new zip.ZipWriter(new zip.Data64URIWriter("application/zip"));
   /* csv header line: */
-  csv_data = 'date,saod_380nm,saod_550nm,saod_1020nm,radiative_forcing\r\n';
+  var csv_data = 'date,saod_380nm,saod_550nm,saod_1020nm,radiative_forcing\r\n';
   /* loop through values: */
   for (var i = 0; i < time_dates.length; i++) {
     /* add line to csv: */
