@@ -30,6 +30,11 @@
   </head>
   <!-- body start: ________________________________________________________ -->
   <body>
+    <!-- set global variables: ____________________________________________ -->
+    <script>
+      /* url prefix for static files: */
+      var static_prefix = '{{ url_for("static", filename="") }}';
+    </script>
     <!-- container start: _________________________________________________ -->
     <div id="container"
          class="container flex_column">

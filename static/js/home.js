@@ -1019,17 +1019,17 @@ function run_model() {
 };
 
 /* function to get data as csv: */
-function get_csv_data() {
+async function get_csv_data() {
   /* model time series first ... get variables: */
   var time_dates = model_data['time_dates'];
   var saod_380_ts = model_data['saod_380_ts'];
   var saod_550_ts = model_data['saod_550_ts'];
   var saod_1020_ts = model_data['saod_1020_ts'];
   var rf_ts = model_data['rf_ts'];
-  /* start csv content: */
-  var csv_data = 'data:text/csv;charset=utf-8,';
-  /* header line: */
-  csv_data += 'date,saod_380nm,saod_550nm,saod_1020nm,radiative_forcing\r\n';
+  /* create zip write object: */
+  const zip_writer = new zip.ZipWriter(new zip.Data64URIWriter("application/zip"));
+  /* csv header line: */
+  csv_data = 'date,saod_380nm,saod_550nm,saod_1020nm,radiative_forcing\r\n';
   /* loop through values: */
   for (var i = 0; i < time_dates.length; i++) {
     /* add line to csv: */
@@ -1039,27 +1039,14 @@ function get_csv_data() {
                 saod_1020_ts[i] + ',' +
                 rf_ts[i] + '\r\n';
   };
-  /* encode csv data: */
-  var encoded_uri = encodeURI(csv_data);
-  /* name for csv file: */
-  var csv_name = 'model_time_series.csv';
-  /* create a temporary link element: */
-  var csv_link = document.createElement("a");
-  csv_link.setAttribute("href", encoded_uri);
-  csv_link.setAttribute("download", csv_name);
-  csv_link.style.visibility = 'hidden';
-  /* add link to document, click to init download, then remove: */
-  document.body.appendChild(csv_link);
-  csv_link.click();
-  document.body.removeChild(csv_link);
+  /* add csv data to zip file: */
+  await zip_writer.add('model_time_series.csv', new zip.TextReader(csv_data));
   /* model saod at 550nm ... get variables: */
   var time_dates = model_data['time_dates'];
   var lat = model_data['lat'];
   var saod_550 = model_data['saod_550'];
-  /* start csv content: */
-  var csv_data = 'data:text/csv;charset=utf-8,';
-  /* header line: */
-  csv_data += 'date,lat,saod_550nm\r\n';
+  /* csv header line: */
+  csv_data = 'date,lat,saod_550nm\r\n';
   /* loop through values: */
   for (var i = 0; i < lat.length; i++) {
     for (var j = 0; j < time_dates.length; j++) {
@@ -1069,29 +1056,16 @@ function get_csv_data() {
                   saod_550[i][j] + '\r\n';
     };
   };
-  /* encode csv data: */
-  var encoded_uri = encodeURI(csv_data);
-  /* name for csv file: */
-  var csv_name = 'model_saod_550nm.csv';
-  /* create a temporary link element: */
-  var csv_link = document.createElement("a");
-  csv_link.setAttribute("href", encoded_uri);
-  csv_link.setAttribute("download", csv_name);
-  csv_link.style.visibility = 'hidden';
-  /* add link to document, click to init download, then remove: */
-  document.body.appendChild(csv_link);
-  csv_link.click();
-  document.body.removeChild(csv_link);
+  /* add csv data to zip file: */
+  await zip_writer.add('model_saod_550nm.csv', new zip.TextReader(csv_data));
   /* fair time series ... get variables: */
   var fair_years = model_data['fair_years'];
   var fair_rf = model_data['fair_rf'];
   var fair_rf_wo = model_data['fair_rf_wo'];
   var fair_temp = model_data['fair_temp'];
   var fair_temp_wo = model_data['fair_temp_wo'];
-  /* start csv content: */
-  var csv_data = 'data:text/csv;charset=utf-8,';
-  /* header line: */
-  csv_data += 'year,radiative_forcing,radiative_forcing_with_eruption,temperature_anomaly,temperature_anomaly_with_eruption\r\n';
+  /* csv header line: */
+  csv_data = 'year,radiative_forcing,radiative_forcing_with_eruption,temperature_anomaly,temperature_anomaly_with_eruption\r\n';
   /* loop through values: */
   for (var i = 0; i < fair_years.length; i++) {
     /* add line to csv: */
@@ -1101,25 +1075,36 @@ function get_csv_data() {
                 fair_temp_wo[i] + ',' +
                 fair_temp[i] + '\r\n';
   };
-  /* encode csv data: */
-  var encoded_uri = encodeURI(csv_data);
-  /* name for csv file: */
-  var csv_name = 'fair_time_series.csv';
+  /* add csv data to zip file: */
+  await zip_writer.add('fair_time_series.csv', new zip.TextReader(csv_data));
+  /* close zip file and get encoded data uri: */
+  const data_uri = await zip_writer.close();
+  /* name for zip file: */
+  var zip_name = 'data.zip';
   /* create a temporary link element: */
-  var csv_link = document.createElement("a");
-  csv_link.setAttribute("href", encoded_uri);
-  csv_link.setAttribute("download", csv_name);
-  csv_link.style.visibility = 'hidden';
+  var zip_link = document.createElement("a");
+  zip_link.setAttribute("href", data_uri);
+  zip_link.setAttribute("download", zip_name);
+  zip_link.style.visibility = 'hidden';
   /* add link to document, click to init download, then remove: */
-  document.body.appendChild(csv_link);
-  csv_link.click();
-  document.body.removeChild(csv_link);
+  document.body.appendChild(zip_link);
+  zip_link.click();
+  document.body.removeChild(zip_link);
 };
 
 /* --- --- */
 
 /* on page load ... : */
 window.addEventListener('load', function() {
+  /* configure zip.js: */
+  zip.configure({
+    useWebWorkers: true,
+    maxWorkers: 2,
+    workerScripts: {
+      deflate: [static_prefix + 'js/z-worker-fflate.js',
+                static_prefix + 'js/fflate.min.js'],
+    }
+  });
   /* add listeners to various elements: */
   add_listeners();
   /* hide some elements ... : */
