@@ -185,18 +185,22 @@ def __run_model(eva_h_dir, user_params):
     # update 2019 for raikoke guess -0.20 w m-2
     ar5_volcanic[rcp45.Emissions.year == 2019] = -0.20
     # run fair without eva_h updates:
-    conc_a, forcing_a, temp_a = fair_scm(
+    fair_result = fair_scm(
         emissions=rcp45.Emissions.emissions,
         F_volcanic=ar5_volcanic
     )
+    forcing_a = fair_result[1]
+    temp_a = fair_result[2]
     # update volcanic forcing values with those from eva_h:
     for i, model_year in enumerate(model_years):
         ar5_volcanic[rcp45.Emissions.year == model_year] += model_rf_means[i]
     # run fair with eva_h updates:
-    conc_b, forcing_b, temp_b = fair_scm(
+    fair_result = fair_scm(
         emissions=rcp45.Emissions.emissions,
         F_volcanic=ar5_volcanic
     )
+    forcing_b = fair_result[1]
+    temp_b = fair_result[2]
     # get required values for year of eruption +/-10.
     # init lists for values:
     fair_years = []
