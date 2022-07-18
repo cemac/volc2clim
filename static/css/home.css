@@ -14,12 +14,12 @@
 
 .input_label {
   background-color: #f7f9fb;
-  min-width: 22em;
+  min-width: 26em;
   padding: 0.5em;
   margin: 0.5em;
 }
 
-@media only screen and (max-width: 400px) {
+@media only screen and (max-width: 500px) {
   .input_label {
     min-width: 95%;
   }

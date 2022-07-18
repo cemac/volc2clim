@@ -14,7 +14,7 @@ var model_params = {
   'so2_height': 25,
   'tropo_height': 16,
   'so2_timescale': 8,
-  'scale_factor': -24
+  'scale_factor': -21.5
 };
 /* variable to indicate if parameters are o.k.: */
 var model_params_ok = true;
@@ -54,7 +54,7 @@ var plot_vars = {
   /* saod time series plot variables: */
   'saod_ts_title': 'Global mean SAOD',
   'saod_ts_x_title': 'Date',
-  'saod_ts_y_title': 'SAOD',
+  'saod_ts_y_title': 'Stratospheric Aerosol<br>Optical Depth (SAOD)',
   'saod_ts_380_col': '#2ca02c',
   'saod_ts_550_col': '#1f77b4',
   'saod_ts_1020_col': '#ff7f0e',
@@ -78,9 +78,9 @@ var plot_vars = {
   /* fair rf time series plot object: */
   'fair_rf_td_plot': null,
   /* fair rf time series plot variables: */
-  'fair_rf_ts_title': 'Volcanic radiative forcing, W m⁻²',
+  'fair_rf_ts_title': 'Volcanic radiative forcing, W/m⁻²',
   'fair_rf_ts_x_title': 'Year',
-  'fair_rf_ts_y_title': 'Radiative forcing (W m⁻²)',
+  'fair_rf_ts_y_title': 'Effective radiative forcing at<br>top of atmosphere (W/m⁻²)',
   'fair_rf_ts_col': '#ff7f0e',
   'fair_rf_wo_ts_col': '#1f77b4',
   /* fair temp time series plot element: */
@@ -653,9 +653,9 @@ function plot_data() {
     var hover_rf_wo = fair_rf_wo_ts_scatter_y[i];
     /* add to hover text: */
     fair_rf_ts_hover[i] = 'Year: ' + hover_year_rf + '<br>' +
-                           'Radiative forcing: ' + hover_rf + ' W m⁻²';
+                          'Radiative forcing: ' + hover_rf + ' W/m⁻²';
     fair_rf_wo_ts_hover[i] = 'Year: ' + hover_year_rf_wo + '<br>' +
-                             'Radiative forcing: ' + hover_rf_wo + ' W m⁻²';
+                             'Radiative forcing: ' + hover_rf_wo + ' W/m⁻²';
   };
   /* fair rf time series plot ... : */
   var fair_rf_ts_scatter = {
@@ -917,7 +917,7 @@ function display_stats() {
                                                ' (' + saod_1020_peak_date + ')';
   stats_els['rf_peak_label'].innerHTML = 'Peak monthly radiative forcing:';
   stats_els['rf_peak_value'].innerHTML = rf_peak_value +
-                                         ' W m⁻² (' + rf_peak_date + ')';
+                                         ' W/m⁻² (' + rf_peak_date + ')';
   stats_els['fair_temp_peak_label'].innerHTML = 'Peak annual temperature anomaly:';
   stats_els['fair_temp_peak_value'].innerHTML = fair_temp_peak_value +
                                          ' K (' + fair_temp_peak_date + ')';
