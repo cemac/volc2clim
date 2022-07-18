@@ -169,8 +169,9 @@ function validate_text_input() {
   var so2_mass_value = so2_mass_el.value;
   /* error element: */
   var so2_mass_error_el = input_els['so2_mass_error'];
+  so2_mass_error_el.innerHTML = '';
   /* check value: */
-  var check_value = check_numeric('Mass of SO₂', so2_mass_value, 0, 50);
+  var check_value = check_numeric('Mass of SO₂', so2_mass_value, 0, 999999);
   /* if o.k., store value: */
   if (check_value['status'] == true) {
     model_params['so2_mass'] = parseFloat(so2_mass_value);
@@ -183,11 +184,19 @@ function validate_text_input() {
     so2_mass_error_el.style.display = 'inline';
     so2_mass_el.style.borderColor = input_border_err;
   };
+  /* if so2 mass i greater than 200, add message: */
+  if (so2_mass_value > 20) {
+    so2_mass_error_el.innerHTML += ' We have a limited understanding of' +
+                                   ' eruptions injecting >20 Tg SO2';
+    so2_mass_error_el.style.display = 'inline';
+    so2_mass_el.style.borderColor = input_border_err;
+  };
   /* lat ... get value: */
   var lat_el = input_els['lat'];
   var lat_value = lat_el.value;
   /* error element: */
   var lat_error_el = input_els['lat_error'];
+  lat_error_el.innerHTML = '';
   /* check value: */
   var check_value = check_numeric('Latitude', lat_value, -90, 90);
   /* if o.k., store value: */
@@ -207,6 +216,7 @@ function validate_text_input() {
   var year_value = year_el.value;
   /* error element: */
   var year_error_el = input_els['year_error'];
+  year_error_el.innerHTML = '';
   /* check value: */
   var check_value = check_numeric('Year', year_value, 1800, 2050, true);
   /* if o.k., store value: */
@@ -226,6 +236,7 @@ function validate_text_input() {
   var so2_height_value = so2_height_el.value;
   /* error element: */
   var so2_height_error_el = input_els['so2_height_error'];
+  so2_height_error_el.innerHTML = '';
   /* check value: */
   var check_value = check_numeric('SO₂ injection height', so2_height_value, 0, 50);
   /* if o.k., store value: */
@@ -245,6 +256,7 @@ function validate_text_input() {
   var tropo_height_value = tropo_height_el.value;
   /* error element: */
   var tropo_height_error_el = input_els['tropo_height_error'];
+  tropo_height_error_el.innerHTML = '';
   /* check value: */
   var check_value = check_numeric('Tropopause height', tropo_height_value, 0, 50);
   /* if o.k., store value: */
@@ -264,6 +276,7 @@ function validate_text_input() {
   var so2_timescale_value = so2_timescale_el.value;
   /* error element: */
   var so2_timescale_error_el = input_els['so2_timescale_error'];
+  so2_timescale_error_el.innerHTML = '';
   /* check value: */
   var check_value = check_numeric('SO₂ timescale', so2_timescale_value, 0.1, 50);
   /* if o.k., store value: */
@@ -283,6 +296,7 @@ function validate_text_input() {
   var scale_factor_value = scale_factor_el.value;
   /* error element: */
   var scale_factor_error_el = input_els['scale_factor_error'];
+  scale_factor_error_el.innerHTML = '';
   /* check value: */
   var check_value = check_numeric('Scale factor', scale_factor_value, -50, -0.1);
   /* if o.k., store value: */
