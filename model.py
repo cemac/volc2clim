@@ -7,6 +7,7 @@ Code to run the EVA_H and FAIR models
 # --- imports
 
 # std lib imports:
+import base64 as b64
 import datetime
 import sys
 
@@ -14,6 +15,7 @@ import sys
 from fair.RCPs import rcp45
 from fair.ancil import cmip5_annex2_forcing as ar5
 from fair.forward import fair_scm
+import netCDF4 as nc
 import numpy as np
 from scipy.integrate import solve_ivp
 from scipy.interpolate import PchipInterpolator
@@ -57,8 +59,114 @@ def check_params(request_params):
         # return False on failure:
         except:
             return False, {}
+    # check for optional netcdf flag, presume not:
+    user_params['nc'] = False
+    if 'nc' in request_params.keys():
+        # 1 is True, anything else is False:
+        if request_params['nc'] == '1':
+            user_params['nc'] = True
     # return the parameters:
     return True, user_params
+
+def data_to_nc(model_dates, model_lats, model_alts, model_wls,
+               model_ext, model_ssa, model_asy, model_saod):
+    """
+    Create NetCDF dataset for model data and return as base64
+
+    :param model_dates: List of model dates as strings in format %Y-%m-%d
+    :param model_lats: Numpy array of model latitudes
+    :param model_alts: Numpy array of model altitudes
+    :param model_wls: Numpy array of model wavelengths
+    :param model_ext: Numpy array of model aerosol extinction
+    :param model_ssa: Numpy array of model single scattering albedo
+    :param model_ssa: Numpy array of model aerosol scattering asymmtery factor
+    :param model_saod: Numpy array of model stratospheric aerosol optical depth
+    """
+    # create the netcdf dataset:
+    nc_data = nc.Dataset(None, mode='w', memory=True, format='NETCDF4')
+    # set up time units and calendar:
+    nc_time_units = 'days since 1900-01-01 00:00:00'
+    # convert model dates to datetimes:
+    model_datetimes = [
+        datetime.datetime.strptime(i, '%Y-%m-%d') for i in model_dates
+    ]
+    # convert datetimes to netcdf times:
+    nc_time_values = nc.date2num(model_datetimes, nc_time_units)
+    # create time dimension:
+    nc_data.createDimension('time', len(model_datetimes))
+    # create time variable:
+    nc_times = nc_data.createVariable('time', 'f', ('time'))
+    # store the times, long name, standard_name, units and calendar:
+    nc_times[:] = nc_time_values
+    nc_times.long_name = 'time'
+    nc_times.standard_name = 'time'
+    nc_times.calendar = 'standard'
+    nc_times.units = nc_time_units
+    # create latitude dimension:
+    nc_data.createDimension('latitude', model_lats.size)
+    # create latitude variable:
+    nc_lats = nc_data.createVariable('latitude', 'f', ('latitude'))
+    # store the latitudes, long name, standard_name, and units:
+    nc_lats[:] = model_lats
+    nc_lats.long_name = 'latitude'
+    nc_lats.standard_name = 'latitude'
+    nc_lats.units = 'degrees_north'
+    # create altitude dimension:
+    nc_data.createDimension('altitude', model_alts.size)
+    # create altitude variable:
+    nc_alts = nc_data.createVariable('altitude', 'f', ('altitude'))
+    # store the altitudes, long name, standard_name, and units:
+    nc_alts[:] = model_alts
+    nc_alts.long_name = 'altitude'
+    nc_alts.standard_name = 'altitude'
+    nc_alts.units = 'K m'
+    # create wavelength dimension:
+    nc_data.createDimension('wavelength', model_wls.size)
+    # create wavelength variable:
+    nc_wls = nc_data.createVariable('wavelength', 'f', ('wavelength'))
+    # store the wavelengths, long name, and units:
+    nc_wls[:] = model_wls
+    nc_wls.long_name = 'wavelength'
+    nc_wls.units = 'um'
+    # create aerosol extinction variable:
+    nc_ext = nc_data.createVariable(
+        'ext', 'f', ('time', 'latitude', 'altitude', 'wavelength'),
+        zlib=True, complevel=1
+    )
+    # store the extinction, long name, and units:
+    nc_ext[:] = model_ext
+    nc_ext.long_name = 'aerosol extinction'
+    nc_ext.units = 'K m**-1'
+    # create single scattering albedo variable:
+    nc_ssa = nc_data.createVariable(
+        'ssa', 'f', ('time', 'latitude', 'altitude', 'wavelength'),
+        zlib=True, complevel=1
+    )
+    # store the scattering and long name:
+    nc_ssa[:] = model_ssa
+    nc_ssa.long_name = 'single scattering albedo'
+    # create aerosol scattering asymmtery factor variable:
+    nc_asy = nc_data.createVariable(
+        'asy', 'f', ('time', 'latitude', 'altitude', 'wavelength'),
+        zlib=True, complevel=1
+    )
+    # store the scattering asymmetry factor and long name:
+    nc_asy[:] = model_asy
+    nc_asy.long_name = 'aerosol scattering asymmtery factor'
+    # create stratospheric aerosol optical depth variable:
+    nc_saod = nc_data.createVariable(
+        'saod', 'f', ('time', 'latitude', 'wavelength'),
+        zlib=True, complevel=1
+    )
+    # store the stratospheric aerosol optical depth and long name:
+    nc_saod[:] = model_saod
+    nc_saod.long_name = 'stratospheric aerosol optical depth'
+    # Close the dataset:
+    nc_mem = nc_data.close()
+    # Convert to base64:
+    nc_b64 = b64.b64encode(nc_mem.tobytes()).decode()
+    # Return base64 encoded NetCDF:
+    return nc_b64
 
 def __run_model(eva_h_dir, user_params):
     """
@@ -241,6 +349,14 @@ def __run_model(eva_h_dir, user_params):
         'fair_temp_wo': fair_temp_wo,
         'fair_temp': fair_temp
     }
+    # if netcdf data has been requested:
+    if user_params['nc']:
+        model_data['nc'] = data_to_nc(
+            model_time_dates, lat, alt, wl_req * 1000,
+            ext, ssa, asy, saod
+        )
+    else:
+        model_data['nc'] = ''
     # return the data:
     return model_data
 

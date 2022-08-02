@@ -14,7 +14,8 @@ var model_params = {
   'so2_height': 25,
   'tropo_height': 16,
   'so2_timescale': 8,
-  'rad_eff': -21.5
+  'rad_eff': -21.5,
+  'nc': 1
 };
 /* variable to indicate if parameters are o.k.: */
 var model_params_ok = true;
@@ -37,7 +38,8 @@ var input_els = {
   'rad_eff_error': document.getElementById('rad_eff_input_error'),
   'run_button': document.getElementById('run_model_button'),
   'run_button_display': null,
-  'data_download_button': document.getElementById('data_download_button')
+  'csv_download_button': document.getElementById('csv_download_button'),
+  'nc_download_button': document.getElementById('nc_download_button')
 };
 
 /* plot config: */
@@ -354,10 +356,14 @@ function add_listeners() {
   var input_run_button = input_els['run_button'];
   /* add click listener: */
   input_run_button.addEventListener('click', run_model);
-  /* add data download button listener: */
-  var input_data_download = input_els['data_download_button'];
+  /* add csv download button listener: */
+  var input_csv_download = input_els['csv_download_button'];
   /* add click listener: */
-  input_data_download.addEventListener('click', get_csv_data);
+  input_csv_download.addEventListener('click', get_csv_data);
+  /* add netcdf download button listener: */
+  var input_nc_download = input_els['nc_download_button'];
+  /* add click listener: */
+  input_nc_download.addEventListener('click', get_nc_data);
 };
 
 /* element hiding function: */
@@ -945,7 +951,8 @@ function __run_model(model_params) {
                    'so2_height=' + model_params['so2_height'] + '&' +
                    'tropo_height=' + model_params['tropo_height'] + '&' +
                    'so2_timescale=' + model_params['so2_timescale'] + '&' +
-                   'rad_eff=' + model_params['rad_eff'];
+                   'rad_eff=' + model_params['rad_eff'] + '&' +
+                   'nc=' + model_params['nc'];
   /* request error function: */
   function model_req_error() {
     console.log('* model error');
@@ -1090,6 +1097,25 @@ async function get_csv_data() {
   document.body.appendChild(zip_link);
   zip_link.click();
   document.body.removeChild(zip_link);
+};
+
+/* function to get data as netcdf: */
+async function get_nc_data() {
+  /* get base64 encdoded netcdf data: */
+  var nc_data = encodeURI(
+    'data:application/x-netcdf;base64,' +  model_data['nc']
+  );
+  /* name for csv file: */
+  var nc_name = 'model_data.nc';
+  /* create a temporary link element: */
+  var nc_link = document.createElement("a");
+  nc_link.setAttribute("href", nc_data);
+  nc_link.setAttribute("download", nc_name);
+  nc_link.style.visibility = 'hidden';
+  /* add link to document, click to init download, then remove: */
+  document.body.appendChild(nc_link);
+  nc_link.click();
+  document.body.removeChild(nc_link);
 };
 
 /* --- --- */
