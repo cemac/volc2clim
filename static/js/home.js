@@ -997,43 +997,53 @@ function run_model() {
 /* function to get data as csv: */
 async function get_csv_data() {
   /* model time series first ... get variables: */
+  var wavelengths = model_data['wavelengths'];
   var time_dates = model_data['time_dates'];
-  var saod_380_ts = model_data['saod_380_ts'];
-  var saod_550_ts = model_data['saod_550_ts'];
-  var saod_1020_ts = model_data['saod_1020_ts'];
+  var saod_ts = model_data['saod_ts'];
   var rf_ts = model_data['rf_ts'];
   /* create zip write object: */
   const zip_writer = new zip.ZipWriter(new zip.Data64URIWriter("application/zip"));
   /* csv header line: */
-  var csv_data = 'date,saod_380nm,saod_550nm,saod_1020nm,radiative_forcing\r\n';
+  var csv_data = 'date,';
+  for (var i = 0; i < wavelengths.length; i++) {
+    csv_data += 'saod_' + wavelengths[i] + 'nm,';
+  };
+  csv_data += 'radiative_forcing\r\n';
   /* loop through values: */
   for (var i = 0; i < time_dates.length; i++) {
     /* add line to csv: */
-    csv_data += time_dates[i] + ',' +
-                saod_380_ts[i] + ',' +
-                saod_550_ts[i] + ',' +
-                saod_1020_ts[i] + ',' +
-                rf_ts[i] + '\r\n';
+    csv_data += time_dates[i] + ',';
+    for (var j = 0; j < wavelengths.length; j++) {
+      csv_data += saod_ts[j][i] + ',';
+    };
+    csv_data += rf_ts[i] + '\r\n';
   };
   /* add csv data to zip file: */
-  await zip_writer.add('model_time_series.csv', new zip.TextReader(csv_data));
-  /* model saod at 550nm ... get variables: */
-  var time_dates = model_data['time_dates'];
+  await zip_writer.add('saod_time_series.csv', new zip.TextReader(csv_data));
+
+  /* model 2d saod at ... get variables: */
   var lat = model_data['lat'];
-  var saod_550 = model_data['saod_550'];
+  var saod = model_data['saod'];
   /* csv header line: */
-  csv_data = 'date,lat,saod_550nm\r\n';
+  csv_data = 'date,lat';
+  for (var i = 0; i < wavelengths.length; i++) {
+    csv_data += ',saod_' + wavelengths[i] + 'nm';
+  };
+  csv_data += '\r\n';
   /* loop through values: */
   for (var i = 0; i < lat.length; i++) {
     for (var j = 0; j < time_dates.length; j++) {
       /* add line to csv: */
       csv_data += time_dates[j] + ',' +
-                  lat[i] + ',' +
-                  saod_550[i][j] + '\r\n';
+                  lat[i];
+      for (var k = 0; k < wavelengths.length; k++) {
+        csv_data += ',' + saod[k][i][j];
+      };
+      csv_data += '\r\n';
     };
   };
   /* add csv data to zip file: */
-  await zip_writer.add('model_saod_550nm.csv', new zip.TextReader(csv_data));
+  await zip_writer.add('saod.csv', new zip.TextReader(csv_data));
   /* fair time series ... get variables: */
   var fair_years = model_data['fair_years'];
   var fair_rf = model_data['fair_rf'];
@@ -1056,7 +1066,7 @@ async function get_csv_data() {
   /* close zip file and get encoded data uri: */
   const data_uri = await zip_writer.close();
   /* name for zip file: */
-  var zip_name = 'data.zip';
+  var zip_name = 'model_data.zip';
   /* create a temporary link element: */
   var zip_link = document.createElement("a");
   zip_link.setAttribute("href", data_uri);
