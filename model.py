@@ -127,7 +127,7 @@ def data_to_nc(model_dates, model_lats, model_alts, model_wls,
     # store the wavelengths, long name, and units:
     nc_wls[:] = model_wls
     nc_wls.long_name = 'wavelength'
-    nc_wls.units = 'um'
+    nc_wls.units = 'nm'
     # create aerosol extinction variable:
     nc_ext = nc_data.createVariable(
         'ext', 'f', ('time', 'latitude', 'altitude', 'wavelength'),
