@@ -7,6 +7,7 @@ var model_url = '/model';
 
 /* model parameters: */
 var model_params = {
+  'wavelengths': [380, 550, 1020],
   'lat': 15.1,
   'year': 2021,
   'month': 1,
@@ -57,9 +58,8 @@ var plot_vars = {
   'saod_ts_title': 'Global mean SAOD',
   'saod_ts_x_title': 'Date',
   'saod_ts_y_title': 'Stratospheric Aerosol<br>Optical Depth (SAOD)',
-  'saod_ts_380_col': '#2ca02c',
-  'saod_ts_550_col': '#1f77b4',
-  'saod_ts_1020_col': '#ff7f0e',
+  'saod_ts_colors': ['#2ca02c', '#1f77b4', '#ff7f0e', '#cc79a7', '#999999',
+                     '#f9e432', '#642133', '#ec3e00', '#fedd3f', '#4356b1'],
   /* contour plot element: */
   'saod_contour_el': document.getElementById('saod_contour_plot'),
   /* saod contour plot object: */
@@ -97,14 +97,9 @@ var plot_vars = {
   'fair_temp_wo_ts_col': '#1f77b4'
 };
 
-/* html elements for statistis: */
+/* html elements for statistics: */
 var stats_els = {
-  'saod_380_peak_label': document.getElementById('stats_saod_380_peak_label'),
-  'saod_380_peak_value': document.getElementById('stats_saod_380_peak_value'),
-  'saod_550_peak_label': document.getElementById('stats_saod_550_peak_label'),
-  'saod_550_peak_value': document.getElementById('stats_saod_550_peak_value'),
-  'saod_1020_peak_label': document.getElementById('stats_saod_1020_peak_label'),
-  'saod_1020_peak_value': document.getElementById('stats_saod_1020_peak_value'),
+  'stats_a_div': document.getElementById('content_model_stats_a'),
   'rf_peak_label': document.getElementById('stats_rf_peak_label'),
   'rf_peak_value': document.getElementById('stats_rf_peak_value'),
   'fair_temp_peak_label': document.getElementById('stats_fair_temp_peak_label'),
@@ -385,6 +380,9 @@ function plot_data() {
   /* enable plot element: */
   var plot_container_el = plot_vars['plot_container_el'];
   plot_container_el.style.display = plot_vars['plot_container_el_display'];
+  /* get wavelengths and index of 550nm: */
+  var wavelengths = model_data['wavelengths']
+  var index_550 = wavelengths.indexOf(550)
 
   /* -- time series plot: -- */
 
@@ -393,90 +391,58 @@ function plot_data() {
   var saod_ts_x_title = plot_vars['saod_ts_x_title'];
   var saod_ts_y_title = plot_vars['saod_ts_y_title'];
   var saod_ts_el = plot_vars['saod_ts_el'];
-  /* saod 380: */
-  var saod_380_ts_scatter_x = model_data['time_years'];
-  var saod_380_ts_scatter_xlabel = model_data['time_dates'];
-  var saod_380_ts_scatter_y = model_data['saod_380_ts'];
-  /* saod 550: */
-  var saod_550_ts_scatter_x = model_data['time_years'];
-  var saod_550_ts_scatter_xlabel = model_data['time_dates'];
-  var saod_550_ts_scatter_y = model_data['saod_550_ts'];
-  /* saod 1020: */
-  var saod_1020_ts_scatter_x = model_data['time_years'];
-  var saod_1020_ts_scatter_xlabel = model_data['time_dates'];
-  var saod_1020_ts_scatter_y = model_data['saod_1020_ts'];
-  /* create hover text for time series plot: */
-  var saod_380_ts_hover = [];
-  var saod_550_ts_hover = [];
-  var saod_1020_ts_hover = [];
-  for (var i = 0; i < saod_380_ts_scatter_x.length; i++) {
-    /* date and saod values for this point: */
-    var hover_date_380 = saod_380_ts_scatter_xlabel[i];
-    var hover_saod_380 = saod_380_ts_scatter_y[i];
-    var hover_date_550 = saod_550_ts_scatter_xlabel[i];
-    var hover_saod_550 = saod_550_ts_scatter_y[i];
-    var hover_date_1020 = saod_1020_ts_scatter_xlabel[i];
-    var hover_saod_1020 = saod_1020_ts_scatter_y[i];
-    /* add to hover text: */
-    saod_380_ts_hover[i] = 'Date: ' + hover_date_380 + '<br>' +
-                           'SAOD at 380nm: ' + hover_saod_380;
-    saod_550_ts_hover[i] = 'Date: ' + hover_date_550 + '<br>' +
-                           'SAOD at 550nm: ' + hover_saod_550;
-    saod_1020_ts_hover[i] = 'Date: ' + hover_date_1020 + '<br>' +
-                            'SAOD at 1020nm: ' + hover_saod_1020;
+  /* get time series data: */
+  var saod_ts_scatter_x = model_data['time_years'];
+  var saod_ts_scatter_xlabel = model_data['time_dates'];
+  var saod_ts_scatter_y = [];
+  var saod_ts_hover = [];
+  /* loop through wavelengths: */
+  for (var i = 0; i < wavelengths.length; i++) {
+    /* get saod time series values: */
+    saod_ts_scatter_y[i] = model_data['saod_ts'][i];
+    /* create hover text for time series plot: */
+    saod_ts_hover[i] = [];
+    for (var j = 0; j < saod_ts_scatter_x.length; j++) {
+      /* date and saod values for this point: */
+      var hover_date = saod_ts_scatter_xlabel[j];
+      var hover_saod = saod_ts_scatter_y[i][j];
+      saod_ts_hover[i][j] = 'Date: ' + hover_date + '<br>' + 'SAOD at ' +
+                            wavelengths[i] + 'nm: ' + hover_saod;
+    };
   };
-  /* saod time series plot ... 380: */
-  var saod_380_ts_scatter = {
-    'type': 'scatter',
-    'name': '380nm',
-    'x': saod_380_ts_scatter_x,
-    'y': saod_380_ts_scatter_y,
-    'mode': 'lines',
-    'marker': {
-      'color': plot_vars['saod_ts_380_col']
-    },
-    'hoverinfo': 'text',
-    'hovertext': saod_380_ts_hover
-  };
-  /* 550: */
-  var saod_550_ts_scatter = {
-    'type': 'scatter',
-    'name': '550nm',
-    'x': saod_550_ts_scatter_x,
-    'y': saod_550_ts_scatter_y,
-    'mode': 'lines',
-    'marker': {
-      'color': plot_vars['saod_ts_550_col']
-    },
-    'hoverinfo': 'text',
-    'hovertext': saod_550_ts_hover
-  };
-  /* 1020: */
-  var saod_1020_ts_scatter = {
-    'type': 'scatter',
-    'name': '1020nm',
-    'x': saod_1020_ts_scatter_x,
-    'y': saod_1020_ts_scatter_y,
-    'mode': 'lines',
-    'marker': {
-      'color': plot_vars['saod_ts_1020_col']
-    },
-    'hoverinfo': 'text',
-    'hovertext': saod_1020_ts_hover
-  };
-  /* plot data in order of plotting: */
-  var saod_ts_data = [
-    saod_380_ts_scatter, saod_550_ts_scatter, saod_1020_ts_scatter
-  ];
-  /* saod time series update: */
+  /* create time series plots ... plot data in order of plotting: */
+  var saod_ts_data = [];
+  /* plot update data: */
   var saod_ts_update = {
-    'x': [
-      saod_380_ts_scatter_x, saod_550_ts_scatter_x, saod_1020_ts_scatter_x
-    ],
-    'y': [
-      saod_380_ts_scatter_y, saod_550_ts_scatter_y, saod_1020_ts_scatter_y
-    ],
-    'hovertext': [saod_380_ts_hover, saod_550_ts_hover, saod_1020_ts_hover]
+    'name': [],
+    'x': [],
+    'y': [],
+    'hovertext': []
+  };
+  /* loop through wavelengths: */
+  for (var i = 0; i < wavelengths.length; i++) {
+    /* wavelength for this plot: */
+    var my_wavelength = wavelengths[i];
+    /* name for this plot: */
+    var my_name = my_wavelength + 'nm';
+    /* create time series scatter plot and append to array of plots: */
+    saod_ts_data.push({
+      'type': 'scatter',
+      'name': my_name,
+      'x': saod_ts_scatter_x,
+      'y': saod_ts_scatter_y[i],
+      'mode': 'lines',
+      'marker': {
+        'color': plot_vars['saod_ts_colors'][i]
+      },
+      'hoverinfo': 'text',
+      'hovertext': saod_ts_hover[i]
+    });
+    /* store update data: */
+    saod_ts_update['name'][i] = my_name;
+    saod_ts_update['x'][i] = saod_ts_scatter_x;
+    saod_ts_update['y'][i] = saod_ts_scatter_y[i];
+    saod_ts_update['hovertext'][i] = saod_ts_hover[i];
   };
   /* saod time series layout: */
   var saod_ts_layout = {
@@ -530,7 +496,7 @@ function plot_data() {
   var saod_contour_x = model_data['time_years'];
   var saod_contour_xlabel = model_data['time_dates'];
   var saod_contour_y = model_data['lat'];
-  var saod_contour_z = model_data['saod_550'];
+  var saod_contour_z = model_data['saod'][index_550];
   var saod_contour_z_min = 999999;
   var saod_contour_z_max = -999999;
   var saod_contour_colorscale = plot_vars['saod_contour_colorscale'];
@@ -869,27 +835,38 @@ function plot_data() {
 
 /* function to display some model output stats: */
 function display_stats() {
-  /* variables of interest: */
-  var saod_380_ts = model_data['saod_380_ts'];
-  var saod_550_ts = model_data['saod_550_ts'];
-  var saod_1020_ts = model_data['saod_1020_ts'];
-  var rf_ts = model_data['rf_ts'];
+  /* time series stats ... get wavelengths and dates: */
+  var wavelengths = model_data['wavelengths'];
   var time_dates = model_data['time_dates'];
+  /* wipe out any html content first: */
+  var stats_a_el = stats_els['stats_a_div'];
+  stats_a_el.innerHTML = '';
+  /* loop through wavelengths: */
+  for (var i = 0; i < wavelengths.length; i++) {
+    /* this wavelength: */
+    var my_wavelength = wavelengths[i];
+    /* this time series: */
+    var saod_ts = model_data['saod_ts'][i];
+    /* get peak value: */
+    var peak_value = Math.max.apply(Math, saod_ts);
+    /* get peak date: */
+    var peak_index =  saod_ts.indexOf(peak_value);
+    var peak_date = time_dates[peak_index].substring(0, 7);
+    /* add div for the stat: */
+    stats_a_el.innerHTML += '<div class="model_stats">' +
+                            '<label class="model_stats_label">' +
+                            'Peak monthly SAOD at ' + my_wavelength + 'nm: ' +
+                            '</label>' +
+                            '<span class="model_stats_value">' +
+                            peak_value + ' (' + peak_date + ')' +
+			    '</span>' +
+                            '</div>';
+  };
+  /* additional variables of interest: */
+  var rf_ts = model_data['rf_ts'];
   var fair_temp = model_data['fair_temp'];
   var fair_temp_wo = model_data['fair_temp_wo'];
   var fair_year = model_data['fair_years'];
-  /* get the peak saod 380 value: */
-  var saod_380_peak_value = Math.max.apply(Math, saod_380_ts);
-  var saod_380_peak_index = saod_380_ts.indexOf(saod_380_peak_value);
-  var saod_380_peak_date = time_dates[saod_380_peak_index].substring(0, 7);
-  /* get the peak saod 550 value: */
-  var saod_550_peak_value = Math.max.apply(Math, saod_550_ts);
-  var saod_550_peak_index = saod_550_ts.indexOf(saod_550_peak_value);
-  var saod_550_peak_date = time_dates[saod_550_peak_index].substring(0, 7);
-  /* get the peak saod 1020 value: */
-  var saod_1020_peak_value = Math.max.apply(Math, saod_1020_ts);
-  var saod_1020_peak_index = saod_1020_ts.indexOf(saod_1020_peak_value);
-  var saod_1020_peak_date = time_dates[saod_1020_peak_index].substring(0, 7);
   /* get the peak rf value: */
   var rf_peak_value = Math.min.apply(Math, rf_ts);
   var rf_peak_index = rf_ts.indexOf(rf_peak_value);
@@ -912,15 +889,6 @@ function display_stats() {
   var fair_temp_peak_value = fair_temp_peak_value.toFixed(6);
   var fair_temp_peak_date = fair_year[fair_temp_peak_index];
   /* update html elements: */
-  stats_els['saod_380_peak_label'].innerHTML = 'Peak monthly SAOD at 380nm:';
-  stats_els['saod_380_peak_value'].innerHTML = saod_380_peak_value +
-                                               ' (' + saod_380_peak_date + ')';
-  stats_els['saod_550_peak_label'].innerHTML = 'Peak monthly SAOD at 550nm:';
-  stats_els['saod_550_peak_value'].innerHTML = saod_550_peak_value +
-                                               ' (' + saod_550_peak_date + ')';
-  stats_els['saod_1020_peak_label'].innerHTML = 'Peak monthly SAOD at 1020nm:';
-  stats_els['saod_1020_peak_value'].innerHTML = saod_1020_peak_value +
-                                               ' (' + saod_1020_peak_date + ')';
   stats_els['rf_peak_label'].innerHTML = 'Peak monthly radiative forcing:';
   stats_els['rf_peak_value'].innerHTML = rf_peak_value +
                                          ' W/m⁻² (' + rf_peak_date + ')';
@@ -944,7 +912,8 @@ function __run_model(model_params) {
   /* enable spinner: */
   model_spinner.style.display = 'inline';
   /* build request parameters: */
-  var req_params = 'lat=' + model_params['lat'] + '&' +
+  var req_params = 'wavelengths=[' + model_params['wavelengths'] + ']&' +
+                   'lat=' + model_params['lat'] + '&' +
                    'year=' + model_params['year'] + '&' +
                    'month=' + model_params['month'] + '&' +
                    'so2_mass=' + model_params['so2_mass'] + '&' +

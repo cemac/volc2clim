@@ -33,11 +33,31 @@ from eva_h.so2injection_8boxes import so2injection_8boxes
 
 def check_params(request_params):
     """
-    Check supplied parameters
+    Check supplied parameters, convrting values as required
 
     :param request_params: POST supplied parameters
     """
-    # expected parameters:
+    # init output dict:
+    user_params = {}
+    # handle wavelength values first:
+    try:
+        # get requested values:
+        wavelengths_in = request_params['wavelengths']
+        # convert from string to list:
+        wavelengths_out = [
+            float(i) for i in wavelengths_in.lstrip('[').rstrip(']').split(',')
+        ]
+        # if 550 is not in the list, add it:
+        if 550 not in wavelengths_out:
+            wavelengths_out.append(550)
+        # convert to numpy array, scale and sort the values:
+        wavelengths_out = np.array(wavelengths_out) / 1000
+        wavelengths_out.sort()
+        # store the values:
+        user_params['wavelengths'] = wavelengths_out
+    except:
+        return False, {}
+    # additional expected parameters:
     params = [
         {'name': 'lat', 'type': float},
         {'name': 'year', 'type': int},
@@ -48,14 +68,14 @@ def check_params(request_params):
         {'name': 'so2_timescale', 'type': float},
         {'name': 'rad_eff', 'type': float}
     ]
-    # init output dict:
-    user_params = {}
     # loop through expected parameters and try to get values:
     for param in params:
         param_name = param['name']
         param_type = param['type']
         try:
-            user_params[param_name] = param_type(request_params[param_name])
+            user_params[param_name] = np.array([
+                param_type(request_params[param_name])
+            ])
         # return False on failure:
         except:
             return False, {}
@@ -175,9 +195,6 @@ def __run_model(eva_h_dir, user_params):
     :param eva_h_dir: Directory containing EVA_H data files
     :param user_params: User supplied parameters
     """
-    # convert parameters to numpy arrays:
-    for i in user_params:
-        user_params[i] = np.array([user_params[i]], dtype=float)
     # init the model parameters:
     model_params = ModelParams()
     # adjust so2 timescale to user provided value:
@@ -236,29 +253,35 @@ def __run_model(eva_h_dir, user_params):
     )
     so4_mass = PchipInterpolator(sol.t, sol.y.T, axis=0)(tref)
     # list of wavelengths at which output are requested, in um:
-    wl_req = np.array([0.380, 0.550, 1.020])
+    wavelengths = user_params['wavelengths']
     # run the post processing:
     gmsaod, saod, reff, ext, ssa, asy, lat, alt = postproc(
         eva_h_dir, so4_mass, model_params, model_params.mstar,
-        model_params.R_reff, wl_req
+        model_params.R_reff, wavelengths
     )
     # convert values for json output ..
     # model time in years to 2 decimal places:
     model_time_years = (tref / 12)
     model_time_years = np.round(model_time_years, 2).tolist()
-    # time series saod 380 to 6 decimal places:
-    model_saod_380_ts = np.round(gmsaod[:, 0], 6).tolist()
-    # time series saod 550 to 6 decimal places:
-    model_saod_550_ts = np.round(gmsaod[:, 1], 6).tolist()
-    # time series saod 1020 to 6 decimal places:
-    model_saod_1020_ts = np.round(gmsaod[:, 2], 6).tolist()
+    # init list for saod values at different wavelengths:
+    model_saod_ts = []
+    model_saod = []
+    # loop through wavelengths:
+    for i in range(wavelengths.size):
+        # store time series data:
+        model_saod_ts.append(
+            np.round(gmsaod[:, i], 6).tolist()
+        )
+        # store 2d time-lat data:
+        model_saod.append(
+             np.round((saod[:, :, i]).T, 6).tolist()
+        )
     # model latitude:
     model_lat = lat.tolist()
-    # saod 550 to 6 decimal places:
-    model_saod_550 = np.round((saod[:, :, 1]).T, 6).tolist()
-    # radiative forcing is model_saod_550_ts multiplied by negative scaling
-    # factor (radiative efficiency):
-    model_rf = user_params['rad_eff'] * model_saod_550_ts
+    # radiative forcing is model_saod_ts at 550nm multiplied by negative
+    # scaling factor (radiative efficiency):
+    index_550 = np.where(wavelengths == 0.55)[0][0]
+    model_rf = user_params['rad_eff'] * model_saod_ts[index_550]
     # get annual global mean rf values for fair. get year for each time step:
     all_model_years = np.array([
         np.floor(i) for i in model_time_years
@@ -333,15 +356,16 @@ def __run_model(eva_h_dir, user_params):
     fair_rf = np.round(fair_rf, 6).tolist()
     fair_temp_wo = np.round(fair_temp_wo, 6).tolist()
     fair_temp = np.round(fair_temp, 6).tolist()
+    # expect wavelengths * 1000 (nm) to be integers:
+    model_wavelengths = np.array(wavelengths * 1000, dtype=int).tolist()
     # data dict for output:
     model_data = {
         'time_years': model_time_years,
         'time_dates': model_time_dates,
         'lat': model_lat,
-        'saod_380_ts': model_saod_380_ts,
-        'saod_550_ts': model_saod_550_ts,
-        'saod_1020_ts': model_saod_1020_ts,
-        'saod_550': model_saod_550,
+        'wavelengths': model_wavelengths,
+        'saod_ts': model_saod_ts,
+        'saod': model_saod,
         'rf_ts': model_rf,
         'fair_years': fair_years,
         'fair_rf_wo': fair_rf_wo,
@@ -352,7 +376,7 @@ def __run_model(eva_h_dir, user_params):
     # if netcdf data has been requested:
     if user_params['nc']:
         model_data['nc'] = data_to_nc(
-            model_time_dates, lat, alt, wl_req * 1000,
+            model_time_dates, lat, alt, wavelengths * 1000,
             ext, ssa, asy, saod
         )
     else:

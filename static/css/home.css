@@ -115,8 +115,15 @@
 /* statistics elements: */
 
 .content_model_stats {
-  margin-top: 2em;
   margin-left: 2em;
+}
+
+#content_model_stats_a {
+  margin-top: 2em;
+}
+
+.model_stats {
+  margin-bottom: 0.25em;
 }
 
 .model_stats_label {
