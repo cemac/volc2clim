@@ -39,24 +39,28 @@ def check_params(request_params):
     """
     # init output dict:
     user_params = {}
-    # handle wavelength values first:
-    try:
-        # get requested values:
-        wavelengths_in = request_params['wavelengths']
-        # convert from string to list:
-        wavelengths_out = [
-            float(i) for i in wavelengths_in.lstrip('[').rstrip(']').split(',')
-        ]
-        # if 550 is not in the list, add it:
-        if 550 not in wavelengths_out:
-            wavelengths_out.append(550)
-        # convert to numpy array, scale and sort the values:
-        wavelengths_out = np.array(wavelengths_out) / 1000
-        wavelengths_out.sort()
-        # store the values:
-        user_params['wavelengths'] = wavelengths_out
-    except:
-        return False, {}
+    # handle wavelength values first. if wavelengths parameters present:
+    if 'wavelengths' in request_params.keys():
+        try:
+            # get requested values:
+            wavelengths_in = request_params['wavelengths']
+            # convert from string to list:
+            wavelengths_out = [
+                float(i) for i in wavelengths_in.lstrip('[').rstrip(']').split(',')
+            ]
+            # if 550 is not in the list, add it:
+            if 550 not in wavelengths_out:
+                wavelengths_out.append(550)
+            # convert to numpy array, scale and sort the values:
+            wavelengths_out = np.array(wavelengths_out) / 1000
+            wavelengths_out.sort()
+            # store the values:
+            user_params['wavelengths'] = wavelengths_out
+        except:
+            return False, {}
+    else:
+        # no parameters present. use default values:
+        user_params['wavelengths'] = np.array([380, 550, 1020]) / 1000
     # additional expected parameters:
     params = [
         {'name': 'lat', 'type': float},
