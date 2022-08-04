@@ -32,6 +32,13 @@
   text-align: right;
 }
 
+.input_value_small {
+  max-width: 3.3em;
+  padding: 0.5em;
+  margin: 0.5em;
+  text-align: right;
+}
+
 #month_input_value {
   min-width: 15.5em;
 }

@@ -37,6 +37,10 @@ var input_els = {
   'so2_timescale_error': document.getElementById('so2_timescale_input_error'),
   'rad_eff': document.getElementById('rad_eff_input_value'),
   'rad_eff_error': document.getElementById('rad_eff_input_error'),
+  'wavelengths1': document.getElementById('wavelengths1_input_value'),
+  'wavelengths2': document.getElementById('wavelengths2_input_value'),
+  'wavelengths3': document.getElementById('wavelengths3_input_value'),
+  'wavelengths_error': document.getElementById('wavelengths_input_error'),
   'run_button': document.getElementById('run_model_button'),
   'run_button_display': null,
   'csv_download_button': document.getElementById('csv_download_button'),
@@ -307,6 +311,46 @@ function validate_text_input() {
     rad_eff_error_el.innerHTML = check_value['message'];
     rad_eff_error_el.style.display = 'inline';
     rad_eff_el.style.borderColor = input_border_err;
+  };
+
+
+
+  /* wavelengths ... get values: */
+  var wavelengths_els = [
+    input_els['wavelengths1'], input_els['wavelengths2'],
+    input_els['wavelengths3']
+  ];
+  var wavelengths_values = [
+    input_els['wavelengths1'].value, input_els['wavelengths2'].value,
+    input_els['wavelengths3'].value
+  ];
+  /* error element: */
+  var wavelengths_error_el = input_els['wavelengths_error'];
+  wavelengths_error_el.innerHTML = '';
+  /* check values: */
+  var wavelengths = [];
+  for (var i = 0; i < wavelengths_els.length; i++) {
+    var check_value = check_numeric(
+      'Wavelength', wavelengths_values[i], 1, 5000
+    );
+    /* if o.k., store value: */
+    if (check_value['status'] == true) {
+      wavelengths.push(parseFloat(wavelengths_values[i]));
+      wavelengths_error_el.style.display = 'none';
+      wavelengths_els[i].style.borderColor = input_border_ok;
+    } else {
+      /* not o.k.: */
+      model_params_ok = false;
+      wavelengths_error_el.innerHTML = check_value['message'];
+      wavelengths_error_el.style.display = 'inline';
+      wavelengths_els[i].style.borderColor = input_border_err;
+      break;
+    };
+  };
+  /* if all wavelengths are o.k.: */
+  if (model_params_ok == true) {
+    /* store the values: */
+    model_params['wavelengths'] = wavelengths;
   };
   /* if parameters o.k., enable button: */
   if (model_params_ok == true) {
