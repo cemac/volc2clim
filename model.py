@@ -185,11 +185,11 @@ def data_to_nc(model_dates, model_lats, model_alts, model_wls,
     # store the stratospheric aerosol optical depth and long name:
     nc_saod[:] = model_saod
     nc_saod.long_name = 'stratospheric aerosol optical depth'
-    # Close the dataset:
+    # close the dataset:
     nc_mem = nc_data.close()
-    # Convert to base64:
+    # convert to base64:
     nc_b64 = b64.b64encode(nc_mem.tobytes()).decode()
-    # Return base64 encoded NetCDF:
+    # return base64 encoded NetCDF:
     return nc_b64
 
 def __run_model(eva_h_dir, user_params):
