@@ -312,9 +312,6 @@ function validate_text_input() {
     rad_eff_error_el.style.display = 'inline';
     rad_eff_el.style.borderColor = input_border_err;
   };
-
-
-
   /* wavelengths ... get values: */
   var wavelengths_els = [
     input_els['wavelengths1'], input_els['wavelengths2'],
@@ -456,13 +453,6 @@ function plot_data() {
   };
   /* create time series plots ... plot data in order of plotting: */
   var saod_ts_data = [];
-  /* plot update data: */
-  var saod_ts_update = {
-    'name': [],
-    'x': [],
-    'y': [],
-    'hovertext': []
-  };
   /* loop through wavelengths: */
   for (var i = 0; i < wavelengths.length; i++) {
     /* wavelength for this plot: */
@@ -482,11 +472,6 @@ function plot_data() {
       'hoverinfo': 'text',
       'hovertext': saod_ts_hover[i]
     });
-    /* store update data: */
-    saod_ts_update['name'][i] = my_name;
-    saod_ts_update['x'][i] = saod_ts_scatter_x;
-    saod_ts_update['y'][i] = saod_ts_scatter_y[i];
-    saod_ts_update['hovertext'][i] = saod_ts_hover[i];
   };
   /* saod time series layout: */
   var saod_ts_layout = {
@@ -529,8 +514,8 @@ function plot_data() {
     );
   } else {
     /* update the plot: */
-    Plotly.update(
-      saod_ts_el, saod_ts_update, saod_ts_layout
+    Plotly.react(
+      saod_ts_el, saod_ts_data, saod_ts_layout, saod_ts_conf
     );
   };
 

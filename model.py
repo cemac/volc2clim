@@ -54,8 +54,8 @@ def check_params(request_params):
             # convert to numpy array, scale and sort the values:
             wavelengths_out = np.array(wavelengths_out) / 1000
             wavelengths_out.sort()
-            # store the values:
-            user_params['wavelengths'] = wavelengths_out
+            # store the unique wavelength values:
+            user_params['wavelengths'] = np.unique(wavelengths_out)
         except:
             return False, {}
     else:
