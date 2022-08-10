@@ -193,25 +193,22 @@
                    class="input_label">
               Wavelengths (nm)
             </label>
-            <input id="wavelengths1_input_value"
-                   class="input_text input_value_small"
-                   type="text"
-                   maxlength="4"
-                   name="wavelengths1"
-                   value="550"
-                   disabled>
-            <input id="wavelengths2_input_value"
-                   class="input_text input_value_small"
-                   type="text"
-                   maxlength="4"
-                   name="wavelengths2"
-                   value="380">
-            <input id="wavelengths3_input_value"
-                   class="input_text input_value_small"
-                   type="text"
-                   maxlength="4"
-                   name="wavelengths3"
-                   value="1020">
+            <div id="wavelengths_inputs">
+              <input id="wavelengths1_input_value"
+                     class="wavelengths_input_value input_text input_value_small"
+                     type="text"
+                     maxlength="4"
+                     name="wavelengths1"
+                     value="550"
+                     disabled></div>
+            <button id="remove_wavelength_button"
+                    class="wavelength_button">
+              -
+            </button>
+            <button id="add_wavelength_button"
+                    class="wavelength_button">
+              +
+            </button>
           </div>
           <div id="wavelengths_input_error"
                class="input_error">

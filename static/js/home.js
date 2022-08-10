@@ -7,7 +7,7 @@ var model_url = '/model';
 
 /* model parameters: */
 var model_params = {
-  'wavelengths': [380, 550, 1020],
+  'wavelengths': [550],
   'lat': 15.1,
   'year': 2021,
   'month': 1,
@@ -37,10 +37,10 @@ var input_els = {
   'so2_timescale_error': document.getElementById('so2_timescale_input_error'),
   'rad_eff': document.getElementById('rad_eff_input_value'),
   'rad_eff_error': document.getElementById('rad_eff_input_error'),
-  'wavelengths1': document.getElementById('wavelengths1_input_value'),
-  'wavelengths2': document.getElementById('wavelengths2_input_value'),
-  'wavelengths3': document.getElementById('wavelengths3_input_value'),
+  'wavelengths_inputs': document.getElementById('wavelengths_inputs'),
   'wavelengths_error': document.getElementById('wavelengths_input_error'),
+  'add_wavelength_button': document.getElementById('add_wavelength_button'),
+  'remove_wavelength_button': document.getElementById('remove_wavelength_button'),
   'run_button': document.getElementById('run_model_button'),
   'run_button_display': null,
   'csv_download_button': document.getElementById('csv_download_button'),
@@ -313,26 +313,22 @@ function validate_text_input() {
     rad_eff_el.style.borderColor = input_border_err;
   };
   /* wavelengths ... get values: */
-  var wavelengths_els = [
-    input_els['wavelengths1'], input_els['wavelengths2'],
-    input_els['wavelengths3']
-  ];
-  var wavelengths_values = [
-    input_els['wavelengths1'].value, input_els['wavelengths2'].value,
-    input_els['wavelengths3'].value
-  ];
+  var wavelengths_els = document.getElementsByClassName(
+    'wavelengths_input_value'
+  );
   /* error element: */
   var wavelengths_error_el = input_els['wavelengths_error'];
   wavelengths_error_el.innerHTML = '';
   /* check values: */
   var wavelengths = [];
   for (var i = 0; i < wavelengths_els.length; i++) {
+    var wavelength_value = wavelengths_els[i].value;
     var check_value = check_numeric(
-      'Wavelength', wavelengths_values[i], 1, 5000
+      'Wavelength', wavelength_value, 1, 5000
     );
     /* if o.k., store value: */
     if (check_value['status'] == true) {
-      wavelengths.push(parseFloat(wavelengths_values[i]));
+      wavelengths.push(parseFloat(wavelength_value));
       wavelengths_error_el.style.display = 'none';
       wavelengths_els[i].style.borderColor = input_border_ok;
     } else {
@@ -365,6 +361,81 @@ function validate_select_input() {
   var month_value = month_el.options[month_el.selectedIndex].value;
   /* store the value: */
   model_params['month'] = parseFloat(month_value);
+};
+
+/* add wavelength input element: */
+function add_wavelength_input() {
+  /* wavelength inputs container: */
+  var wavelengths_inputs = input_els['wavelengths_inputs'];
+  /* get existing wavelength elements and count: */
+  var wavelengths_els = document.getElementsByClassName(
+    'wavelengths_input_value'
+  );
+  var wavelength_count = wavelengths_els.length;
+  /* new element number / id: */
+  var new_wavelength = wavelength_count + 1;
+  /* add the new element: */
+  var wavelength_input = document.createElement('input');
+  wavelength_input.id = 'wavelengths' + new_wavelength  + '_input_value';
+  wavelength_input.classList = 'wavelengths_input_value input_text ' +
+                               'input_value_small';
+  wavelength_input.type = 'text';
+  wavelength_input.maxLength = 4;
+  wavelength_input.name = 'wavelengths' + new_wavelength;
+  wavelength_input.value = '550';
+  wavelengths_inputs.appendChild(wavelength_input);
+  /* add listeners to element ... add focus listener to select text: */
+  wavelength_input.addEventListener('focus', wavelength_input.select);
+  /* add change listener: */
+  wavelength_input.addEventListener('input', validate_text_input);
+  wavelength_input.addEventListener('propertychange', validate_text_input);
+  /* enable remove button: */
+  var remove_wavelength_el = document.getElementById(
+    'remove_wavelength_button'
+  );
+  remove_wavelength_el.style.display = 'inline';
+  /* focus the new element: */
+  wavelength_input.focus();
+  wavelength_input.select();
+  /* remove add button if we get to 10 inputs: */
+  if (wavelength_count > 8) {
+    var remove_wavelength_el = document.getElementById(
+      'add_wavelength_button'
+    );
+    remove_wavelength_el.style.display = 'none';
+  };
+};
+
+/* remove wavelength input element: */
+function remove_wavelength_input() {
+  /* wavelength inputs container: */
+  var wavelengths_inputs = input_els['wavelengths_inputs'];
+  /* get existing wavelength elements and count: */
+  var wavelengths_els = document.getElementsByClassName(
+    'wavelengths_input_value'
+  );
+  var wavelength_count = wavelengths_els.length;
+  /* get the final input element: */
+  var wavelength_input = document.getElementById(
+    'wavelengths' + wavelength_count + '_input_value'
+  );
+  /* remove the element: */
+  wavelength_input.parentNode.removeChild(wavelength_input);
+  /* disable remove button, if only one input left: */
+  if (wavelength_count < 3) {
+    var remove_wavelength_el = document.getElementById(
+      'remove_wavelength_button'
+    );
+    remove_wavelength_el.style.display = 'none';
+  };
+  /* enable add button if less than 10 inputs: */
+  if (wavelength_count < 11) {
+    var remove_wavelength_el = document.getElementById(
+      'add_wavelength_button'
+    );
+    remove_wavelength_el.style.display = 'inline';
+  };
+
 };
 
 /* add input listeners: */
@@ -400,6 +471,11 @@ function add_listeners() {
   var input_nc_download = input_els['nc_download_button'];
   /* add click listener: */
   input_nc_download.addEventListener('click', get_nc_data);
+  /* add listeners for wavelength add and remove buttons: */
+  var add_wavelength_button = input_els['add_wavelength_button'];
+  add_wavelength_button.addEventListener('click', add_wavelength_input);
+  var remove_wavelength_button = input_els['remove_wavelength_button'];
+  remove_wavelength_button.addEventListener('click', remove_wavelength_input);
 };
 
 /* element hiding function: */
