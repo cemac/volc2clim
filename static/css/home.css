@@ -57,13 +57,14 @@
 
 .wavelength_button {
   font-size: 1.3em;
-  color: #000000;
-  background-color: #ffffff;
-  border: 0px solid #ffffff;
-  padding: 0em;
-  padding-bottom: 0.3em;
-  margin: 0em;
+  font-weight: bold;
+  height: 1.4em;
+  width: 1.4em;
+  color: #eeeeee;
+  background-color: #2488cb;
+  border: 1px solid #2488cb;
   margin-left: 0.3em;
+  margin-top: 0.4em;
   cursor: pointer;
 }
 
