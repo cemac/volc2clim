@@ -53,6 +53,7 @@
   color: #ee3333;
   padding: 0.5em;
   margin: 0.5em;
+  max-width: 26em;
 }
 
 .wavelength_button {
@@ -156,6 +157,15 @@
 
 .model_stats_value {
   font-weight: 300;
+}
+
+.vci_value_label {
+  font-weight: 500;
+  padding-left: 0.2em;
+  padding-right: 0.2em;
+  padding-top: 0.1em;
+  padding-bottom: 0.1em;
+  border-radius: 0.25em;
 }
 
 /* data download elements: */

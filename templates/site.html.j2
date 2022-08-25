@@ -11,7 +11,7 @@
           href="{{ url_for('static', filename='img/icon/icon.png') }}"
           sizes="192x192">
     <!-- title: ___________________________________________________________ -->
-    <title>Volcanic forcing and climate response - {{ current_page }}{% if page_title is defined %} - {{ page_title }}{% endif %}</title>
+    <title>Volc2Clim - {{ current_page }}{% if page_title is defined %} - {{ page_title }}{% endif %}</title>
     <!-- styles: __________________________________________________________ -->
     {%- block css %}{% endblock %}
     <!-- site style: -->
@@ -56,7 +56,12 @@
         </div>
         <div id="header_text"
              class="header_text">
-          Volcanic forcing and climate response
+          <p class="header_text_large">
+            Volc2Clim
+          </p>
+          <p class="header_text_small">
+            From volcanic sulfur emissions to radiative forcing and climate response
+          </p>
         </div>
       </div>
       <!-- navigation: ____________________________________________________ -->
@@ -104,7 +109,34 @@
       <!-- footer: ________________________________________________________ -->
       <div id="footer"
            class="footer flex_row_wrap flex_justify flex_no_grow">
-        <p></p>
+        <div id="footer_cam_logo"
+             class="footer_item">
+          <a href="https://cam.ac.uk/">
+            <img class="footer_logo"
+                 src="{{ url_for('static', filename='img/footer/cam_logo.png') }}">
+          </a>
+        </div>
+        <div id="footer_bgs_logo"
+             class="footer_item">
+          <a href="https://bgs.ac.uk/">
+            <img class="footer_logo"
+                 src="{{ url_for('static', filename='img/footer/bgs_logo.png') }}">
+          </a>
+        </div>
+        <div id="footer_uol_logo"
+             class="footer_item">
+          <a href="https://leeds.ac.uk/">
+            <img class="footer_logo"
+                 src="{{ url_for('static', filename='img/footer/uol_logo.png') }}">
+          </a>
+        </div>
+        <div id="footer_comet_logo"
+             class="footer_item">
+          <a href="https://comet.nerc.ac.uk/">
+            <img class="footer_logo"
+                 src="{{ url_for('static', filename='img/footer/comet_logo.png') }}">
+          </a>
+        </div>
       </div>
       <div id="footer_text"
            class="footer_text flex_row_wrap flex_center flex_no_grow">

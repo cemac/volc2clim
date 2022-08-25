@@ -23,7 +23,23 @@
         <div id="content_overview"
              class="flex_row_wrap flex_justify">
           <div class="content_text flex_column">
-            Some information goes here ...
+            <p>
+              Volc2Clim is a webtool to calculate aerosol optical properties, global-mean radiative forcing and changes in global-mean surface temperature in response to volcanic sulfur emitted by explosive volcanic eruptions. It combines three simple and peer-reviewed models:
+              <ol>
+                <li>EVA_H, which predicts perturbations in aerosol optical properties, such as the stratospheric aerosol optical depth (SAOD) for a given mass of sulfur dioxide (SO₂), injection altitude and injection latitude (Aubry et al., 2020; <a href="https://github.com/thomasaubry/EVA_H">https://github.com/thomasaubry/EVA_H</a>)</li>
+                <li>A scaling factor that reflects the relationship between the global-mean SAOD perturbation (at 550 nm) and the global-mean effective volcanic radiative forcing at the top of the atmosphere (Schmidt et al., 2018; Marshall et al., 2021)</li>
+                <li>FaIR, a simple climate response model that calculates the global-mean surface temperature response based on the global-mean effective volcanic radiative forcing calculated in 2. (Smith et al., 2018; <a href="https://github.com/OMS-NetZero/FAIR">https://github.com/OMS-NetZero/FAIR</a>)</li>
+              </ol>
+            </p>
+            <p>
+              All these models heavily simplify processes involved in the volcanic sulfate aerosol lifecycle and in the climate system, and they are empirical in nature. The results obtained with Vol2Clim should thus be interpreted with caution, especially for eruptions whose characteristic differ from any historical eruption during the period 1979 to 2021, based on which EVA-H is calibrated. The predictions also solely account for the climate effects of volcanic sulfur dioxide emissions and not, for example, for the impact of volcanic ash, halogens or water vapor that might be co-injected with sulfur.
+            </p>
+            <p>
+              The user can provide eruption source parameters characterizing the volcanic SO₂ injection and set some of the parameters used by the underlying models. Volc2Clim will output: i) a set of downloadable figures showing key outputs from the models; ii) a csv file containing the  output data from the models; and iii) a netcdf file containing 4-dimensional aerosol optical properties predicted by EVA_H that can be used as boundary conditions in global climate models that do not have interactive stratospheric aerosol capabilities.
+            </p>
+            <p>
+              Please refer to the papers below for details of each specific model used in Volc2Clim, and feel free to contact us if you have any question or feedback. We hope that you enjoy Volc2Clim for your teaching, research and operational needs, or if you are just a curious person learning about volcanoes and climate!
+            </p>
           </div>
         </div>
         <div id="content_overview"

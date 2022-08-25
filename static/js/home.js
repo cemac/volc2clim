@@ -14,7 +14,7 @@ var model_params = {
   'so2_mass': 18,
   'so2_height': 25,
   'tropo_height': 16,
-  'so2_timescale': 8,
+  'aerosol_timescale': 8,
   'rad_eff': -21.5,
   'nc': 1
 };
@@ -33,8 +33,8 @@ var input_els = {
   'so2_height_error': document.getElementById('so2_height_input_error'),
   'tropo_height': document.getElementById('tropo_height_input_value'),
   'tropo_height_error': document.getElementById('tropo_height_input_error'),
-  'so2_timescale': document.getElementById('so2_timescale_input_value'),
-  'so2_timescale_error': document.getElementById('so2_timescale_input_error'),
+  'aerosol_timescale': document.getElementById('aerosol_timescale_input_value'),
+  'aerosol_timescale_error': document.getElementById('aerosol_timescale_input_error'),
   'rad_eff': document.getElementById('rad_eff_input_value'),
   'rad_eff_error': document.getElementById('rad_eff_input_error'),
   'wavelengths_inputs': document.getElementById('wavelengths_inputs'),
@@ -84,9 +84,9 @@ var plot_vars = {
   /* fair rf time series plot object: */
   'fair_rf_td_plot': null,
   /* fair rf time series plot variables: */
-  'fair_rf_ts_title': 'Volcanic radiative forcing, W/m⁻²',
+  'fair_rf_ts_title': 'Global mean stratospheric aerosol forcing, W/m²',
   'fair_rf_ts_x_title': 'Year',
-  'fair_rf_ts_y_title': 'Effective radiative forcing at<br>top of atmosphere (W/m⁻²)',
+  'fair_rf_ts_y_title': 'Effective radiative forcing at<br>top of atmosphere (W/m²)',
   'fair_rf_ts_col': '#ff7f0e',
   'fair_rf_wo_ts_col': '#1f77b4',
   /* fair temp time series plot element: */
@@ -94,7 +94,7 @@ var plot_vars = {
   /* fair temp time series plot object: */
   'fair_temp_td_plot': null,
   /* fair temp time series plot variables: */
-  'fair_temp_ts_title': 'RCP4.5 temperature anomaly, K',
+  'fair_temp_ts_title': 'RCP4.5 global mean surface temperature anomaly, K',
   'fair_temp_ts_x_title': 'Year',
   'fair_temp_ts_y_title': 'Temperature anomaly (K)',
   'fair_temp_ts_col': '#ff7f0e',
@@ -107,7 +107,9 @@ var stats_els = {
   'rf_peak_label': document.getElementById('stats_rf_peak_label'),
   'rf_peak_value': document.getElementById('stats_rf_peak_value'),
   'fair_temp_peak_label': document.getElementById('stats_fair_temp_peak_label'),
-  'fair_temp_peak_value': document.getElementById('stats_fair_temp_peak_value')
+  'fair_temp_peak_value': document.getElementById('stats_fair_temp_peak_value'),
+  'vci_label': document.getElementById('stats_vci_label'),
+  'vci_value': document.getElementById('stats_vci_value')
 };
 
 /* model data: */
@@ -187,8 +189,13 @@ function validate_text_input() {
   };
   /* if so2 mass i greater than 200, add message: */
   if ((model_params_ok == true) && (so2_mass_value > 20)) {
-    so2_mass_error_el.innerHTML += ' We have a limited understanding of' +
-                                   ' eruptions injecting >20 Tg SO2';
+    so2_mass_error_el.innerHTML += ' The models used, in particular the' +
+                                   ' volcanic aerosol model EVA_H, were' +
+                                   ' calibrated using eruptions injecting' +
+                                   ' up to ca. 18 Tg of SO2 (i.e. Mt Pinatubo' +
+                                   ' 1991) into the stratosphere. Interpret' +
+                                   ' results cautiously when using much larger' +
+                                   ' SO2 emissions.';
     so2_mass_error_el.style.display = 'inline';
     so2_mass_el.style.borderColor = input_border_err;
   };
@@ -272,25 +279,25 @@ function validate_text_input() {
     tropo_height_error_el.style.display = 'inline';
     tropo_height_el.style.borderColor = input_border_err;
   };
-  /* so2 timescale ... get value: */
-  var so2_timescale_el = input_els['so2_timescale'];
-  var so2_timescale_value = so2_timescale_el.value;
+  /* aerosol timescale ... get value: */
+  var aerosol_timescale_el = input_els['aerosol_timescale'];
+  var aerosol_timescale_value = aerosol_timescale_el.value;
   /* error element: */
-  var so2_timescale_error_el = input_els['so2_timescale_error'];
-  so2_timescale_error_el.innerHTML = '';
+  var aerosol_timescale_error_el = input_els['aerosol_timescale_error'];
+  aerosol_timescale_error_el.innerHTML = '';
   /* check value: */
-  var check_value = check_numeric('SO₂ timescale', so2_timescale_value, 0.1, 50);
+  var check_value = check_numeric('SO₂ timescale', aerosol_timescale_value, 0.1, 50);
   /* if o.k., store value: */
   if (check_value['status'] == true) {
-    model_params['so2_timescale'] = parseFloat(so2_timescale_value);
-    so2_timescale_error_el.style.display = 'none';
-    so2_timescale_el.style.borderColor = input_border_ok;
+    model_params['aerosol_timescale'] = parseFloat(aerosol_timescale_value);
+    aerosol_timescale_error_el.style.display = 'none';
+    aerosol_timescale_el.style.borderColor = input_border_ok;
   } else {
     /* not o.k.: */
     model_params_ok = false;
-    so2_timescale_error_el.innerHTML = check_value['message'];
-    so2_timescale_error_el.style.display = 'inline';
-    so2_timescale_el.style.borderColor = input_border_err;
+    aerosol_timescale_error_el.innerHTML = check_value['message'];
+    aerosol_timescale_error_el.style.display = 'inline';
+    aerosol_timescale_el.style.borderColor = input_border_err;
   };
   /* radiate efficiency / scale factor ... get value: */
   var rad_eff_el = input_els['rad_eff'];
@@ -553,16 +560,38 @@ function plot_data() {
   var saod_ts_layout = {
     'title': {
       'text': saod_ts_title,
+      'font': {
+        'size': 20
+      }
     },
     'xaxis': {
-      'title': saod_ts_x_title,
+      'tickfont': {
+        'size': 16
+      },
+      'title': {
+        'text': saod_ts_x_title,
+        'font': {
+          'size': 18
+        }
+      },
       'zeroline': false
     },
     'yaxis': {
-      'title': saod_ts_y_title,
+      'tickfont': {
+        'size': 16
+      },
+      'title': {
+        'text': saod_ts_y_title,
+        'font': {
+          'size': 18
+        }
+      },
       'zeroline': false
     },
     'legend': {
+      'font': {
+        'size': 16
+      },
       'x': 1,
       'y': 1,
       'xanchor': 'right'
@@ -667,13 +696,32 @@ function plot_data() {
   var saod_contour_layout = {
     'title': {
       'text': saod_contour_title,
+      'font': {
+        'size': 20
+      }
     },
     'xaxis': {
-      'title': saod_contour_x_title,
+      'tickfont': {
+        'size': 16
+      },
+      'title': {
+        'text': saod_contour_x_title,
+        'font': {
+          'size': 18
+        }
+      },
       'zeroline': false
     },
     'yaxis': {
-      'title': saod_contour_y_title,
+      'tickfont': {
+        'size': 16
+      },
+      'title': {
+        'text': saod_contour_y_title,
+        'font': {
+          'size': 18
+        }
+      },
       'zeroline': false,
       'tickvals': [-80, -40, 0, 40, 80]
     },
@@ -730,9 +778,9 @@ function plot_data() {
     var hover_rf_wo = fair_rf_wo_ts_scatter_y[i];
     /* add to hover text: */
     fair_rf_ts_hover[i] = 'Year: ' + hover_year_rf + '<br>' +
-                          'Radiative forcing: ' + hover_rf + ' W/m⁻²';
+                          'Radiative forcing: ' + hover_rf + ' W/m²';
     fair_rf_wo_ts_hover[i] = 'Year: ' + hover_year_rf_wo + '<br>' +
-                             'Radiative forcing: ' + hover_rf_wo + ' W/m⁻²';
+                             'Radiative forcing: ' + hover_rf_wo + ' W/m²';
   };
   /* fair rf time series plot ... : */
   var fair_rf_ts_scatter = {
@@ -778,16 +826,38 @@ function plot_data() {
   var fair_rf_ts_layout = {
     'title': {
       'text': fair_rf_ts_title,
+      'font': {
+        'size': 20
+      }
     },
     'xaxis': {
-      'title': fair_rf_ts_x_title,
+      'tickfont': {
+        'size': 16
+      },
+      'title': {
+        'text': fair_rf_ts_x_title,
+        'font': {
+          'size': 18
+        }
+      },
       'zeroline': false
     },
     'yaxis': {
-      'title': fair_rf_ts_y_title,
+      'tickfont': {
+        'size': 16
+      },
+      'title': {
+        'text': fair_rf_ts_y_title,
+        'font': {
+          'size': 18
+        }
+      },
       'zeroline': false
     },
     'legend': {
+      'font': {
+        'size': 16
+      },
       'x': 0,
       'y': 0,
       'xanchor': 'left',
@@ -893,16 +963,38 @@ function plot_data() {
   var fair_temp_ts_layout = {
     'title': {
       'text': fair_temp_ts_title,
+      'font': {
+        'size': 20
+      }
     },
     'xaxis': {
-      'title': fair_temp_ts_x_title,
+      'tickfont': {
+        'size': 16
+      },
+      'title': {
+        'text': fair_temp_ts_x_title,
+        'font': {
+          'size': 18
+        }
+      },
       'zeroline': false
     },
     'yaxis': {
-      'title': fair_temp_ts_y_title,
+      'tickfont': {
+        'size': 16
+      },
+      'title': {
+        'text': fair_temp_ts_y_title,
+        'font': {
+          'size': 18
+        }
+      },
       'zeroline': false
     },
     'legend': {
+      'font': {
+        'size': 16
+      },
       'x': 0,
       'y': 0,
       'xanchor': 'left',
@@ -940,6 +1032,11 @@ function plot_data() {
 
 /* function to display some model output stats: */
 function display_stats() {
+  /* array of month labels: */
+  var month_labels = [
+    'Jan.', 'Feb.', 'Mar.', 'Apr.', 'May.', 'Jun.',
+    'Jul.', 'Aug.', 'Sep.', 'Oct.', 'Nov.', 'Dec.'
+  ];
   /* time series stats ... get wavelengths and dates: */
   var wavelengths = model_data['wavelengths'];
   var time_dates = model_data['time_dates'];
@@ -957,13 +1054,16 @@ function display_stats() {
     /* get peak date: */
     var peak_index =  saod_ts.indexOf(peak_value);
     var peak_date = time_dates[peak_index].substring(0, 7);
+    var peak_year = peak_date.substring(0, 4);
+    var peak_month = peak_date.substring(5, 7);
+    var peak_month = month_labels[parseInt(peak_month) - 1];
     /* add div for the stat: */
     stats_a_el.innerHTML += '<div class="model_stats">' +
                             '<label class="model_stats_label">' +
-                            'Peak monthly SAOD at ' + my_wavelength + 'nm: ' +
+                            'Peak monthly global mean SAOD at ' + my_wavelength + 'nm: ' +
                             '</label>' +
                             '<span class="model_stats_value">' +
-                            peak_value + ' (' + peak_date + ')' +
+                            peak_value.toFixed(3) + ' (' + peak_month + ' ' + peak_year + ')' +
 			    '</span>' +
                             '</div>';
   };
@@ -976,6 +1076,9 @@ function display_stats() {
   var rf_peak_value = Math.min.apply(Math, rf_ts);
   var rf_peak_index = rf_ts.indexOf(rf_peak_value);
   var rf_peak_date = time_dates[rf_peak_index].substring(0, 7);
+  var rf_peak_year = rf_peak_date.substring(0, 4);
+  var rf_peak_month = rf_peak_date.substring(5, 7);
+  var rf_peak_month = month_labels[parseInt(rf_peak_month) - 1];
   /*
    * get peak temperature anomaly value / where there is the max diff between
    * with and without eruption:
@@ -991,15 +1094,58 @@ function display_stats() {
       fair_temp_peak_index = i;
     };
   };
-  var fair_temp_peak_value = fair_temp_peak_value.toFixed(6);
   var fair_temp_peak_date = fair_year[fair_temp_peak_index];
   /* update html elements: */
-  stats_els['rf_peak_label'].innerHTML = 'Peak monthly radiative forcing:';
-  stats_els['rf_peak_value'].innerHTML = rf_peak_value +
-                                         ' W/m⁻² (' + rf_peak_date + ')';
-  stats_els['fair_temp_peak_label'].innerHTML = 'Peak annual temperature anomaly:';
-  stats_els['fair_temp_peak_value'].innerHTML = fair_temp_peak_value +
+  stats_els['rf_peak_label'].innerHTML = 'Peak monthly global mean radiative forcing:';
+  stats_els['rf_peak_value'].innerHTML = rf_peak_value.toFixed(2) +
+                                         ' W/m² (' + rf_peak_month + ' ' + rf_peak_year + ')';
+  stats_els['fair_temp_peak_label'].innerHTML = 'Peak annual global mean suface temperature anomaly:';
+  stats_els['fair_temp_peak_value'].innerHTML = fair_temp_peak_value.toFixed(3) +
                                          ' K (' + fair_temp_peak_date + ')';
+  /* vci score background colors: */
+  var vci_bgcolors = {
+    '6': '#7a0c37',
+    '5': '#b20535',
+    '4': '#e36c0a',
+    '3': '#e36c0a',
+    '2': '#f5ec82',
+    '1': '#f5ec82',
+    '0': '#c2d69b'
+  };
+  /* vci score text colors: */
+  var vci_colors = {
+    '6': '#ffffff',
+    '5': '#ffffff',
+    '4': '#ffffff',
+    '3': '#ffffff',
+    '2': '#000000',
+    '1': '#000000',
+    '0': '#000000'
+  };
+  /* calculate vci score: */
+  var gmst_value = parseFloat(fair_temp_peak_value);
+  var vci_value = 'unknown';
+  if (gmst_value <= -2) {
+    vci_value = 5;
+  } else if ((-2 < gmst_value) && (gmst_value <= -0.5)) {
+     vci_value = 4;
+  } else if ((-0.5 < gmst_value) && (gmst_value <= -0.1)) {
+     vci_value = 3;
+  } else if ((-0.1 < gmst_value) && (gmst_value <= -0.01)) {
+     vci_value = 2;
+  } else if (-0.01 < gmst_value) {
+     vci_value = 1;
+  };
+  /* update vci html elements: */
+  stats_els['vci_label'].innerHTML = '<a href="https://volcano-climate.github.io/vci/">VCI<a/> value:';
+  if (vci_value == 'unknown') {
+    stats_els['vci_value'].innerHTML = vci_value;
+  } else {
+    stats_els['vci_value'].innerHTML = '<label class="vci_value_label"' +
+                                       ' style="color: ' + vci_colors[vci_value] + ';' +
+                                       ' background-color: ' + vci_bgcolors[vci_value] + ';' +
+                                       '">' + vci_value + '</label>';
+  };
 };
 
 /* run the model by posting parameters: */
@@ -1024,7 +1170,7 @@ function __run_model(model_params) {
                    'so2_mass=' + model_params['so2_mass'] + '&' +
                    'so2_height=' + model_params['so2_height'] + '&' +
                    'tropo_height=' + model_params['tropo_height'] + '&' +
-                   'so2_timescale=' + model_params['so2_timescale'] + '&' +
+                   'aerosol_timescale=' + model_params['aerosol_timescale'] + '&' +
                    'rad_eff=' + model_params['rad_eff'] + '&' +
                    'nc=' + model_params['nc'];
   /* request error function: */

@@ -258,20 +258,27 @@ button, button:focus, button:active {
 
 /** header: **/
 
-.header_logo_img {
-  max-height: 90px;
-}
-
 .header {
   background-color: #ffffff;
   height: 90px;
 }
 
-.header_text {
+.header_logo_img {
+  max-height: 90px;
+}
+
+.header_text_large {
   color: #0e1c3f;
   font-size: 1.6em;
   margin-left: 0.5em;
-  margin-top: 1.8em;
+  margin-top: 0.5em;
+}
+
+.header_text_small {
+  color: #0e1c3f;
+  font-size: 1.0em;
+  margin-left: 0.8em;
+  margin-top: 0.1em;
 }
 
 @media only screen and (min-width: 650px) {
@@ -287,6 +294,12 @@ button, button:focus, button:active {
   .header_text {
     margin-top: 1.8em;
     font-size: 1.1em;
+  }
+}
+
+@media only screen and (max-width: 800px) {
+  .header_text_small {
+    display: none;
   }
 }
 
@@ -508,6 +521,7 @@ button, button:focus, button:active {
   max-height: 4em;
   max-width: 270px;
   margin: 0.5em;
+  margin-top: 1em;
 }
 
 /* full screen images: */

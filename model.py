@@ -69,7 +69,7 @@ def check_params(request_params):
         {'name': 'so2_mass', 'type': float},
         {'name': 'so2_height', 'type': float},
         {'name': 'tropo_height', 'type': float},
-        {'name': 'so2_timescale', 'type': float},
+        {'name': 'aerosol_timescale', 'type': float},
         {'name': 'rad_eff', 'type': float}
     ]
     # loop through expected parameters and try to get values:
@@ -201,8 +201,8 @@ def __run_model(eva_h_dir, user_params):
     """
     # init the model parameters:
     model_params = ModelParams()
-    # adjust so2 timescale to user provided value:
-    model_params.tauprod = np.ones(8) * user_params['so2_timescale']
+    # adjust aerosol timescale to user provided value:
+    model_params.tauprod = np.ones(8) * user_params['aerosol_timescale']
     # calculate volcanic so2 injections:
     inmass, intime = so2injection_8boxes(
         eva_h_dir,
