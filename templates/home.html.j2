@@ -54,10 +54,10 @@
         <div id="content_model_inputs_a"
              class="content_model_inputs flex_column flex_grow">
           <div id="so2_mass_input"
-               class="content_model_input flex_row_wrap"
-               title="The mass of SO₂ in Tg of SO₂ (1 Tg = 1 Mt = 1 billion kg) injected by the eruption. The suggested default value is that of the 1991 eruption of Mt. Pinatubo">
+               class="content_model_input flex_row_wrap">
             <label id="so2_mass_input_label"
-                   class="input_label">
+                   class="input_label"
+                   title="The mass of SO₂ in Tg of SO₂ (1 Tg = 1 Mt = 1 billion kg) injected by the eruption. The suggested default value is that of the 1991 eruption of Mt. Pinatubo">
               Mass of SO₂ (Tg)
             </label>
             <input id="so2_mass_input_value"
@@ -71,10 +71,10 @@
                class="input_error">
           </div>
           <div id="lat_input"
-               class="content_model_input flex_row_wrap"
-               title="The latitude of the erupting volcano. The suggested default value is that of the 1991 eruption of Mt. Pinatubo">
+               class="content_model_input flex_row_wrap">
             <label id="lat_input_label"
-                   class="input_label">
+                   class="input_label"
+                   title="The latitude of the erupting volcano. The suggested default value is that of the 1991 eruption of Mt. Pinatubo">
               Volcano latitude (° North)
             </label>
             <input id="lat_input_value"
@@ -88,10 +88,10 @@
                class="input_error">
           </div>
           <div id="year_input"
-               class="content_model_input flex_row_wrap"
-               title="The year during which the eruption occurred. The default value is 2021">
+               class="content_model_input flex_row_wrap">
             <label id="lat_input_label"
-                   class="input_label">
+                   class="input_label"
+                   title="The year during which the eruption occurred. The default value is 2021">
               Eruption year
             </label>
             <input id="year_input_value"
@@ -105,10 +105,10 @@
                class="input_error">
           </div>
           <div id="month_input"
-               class="content_model_input flex_row_wrap"
-               title="The month during which the eruption occurred">
+               class="content_model_input flex_row_wrap">
             <label id="month_input_label"
-                   class="input_label">
+                   class="input_label"
+                   title="The month during which the eruption occurred">
               Eruption month
             </label>
             <select id="month_input_value"
@@ -128,10 +128,10 @@
             </select>
           </div>
           <div id="so2_height_input"
-               class="content_model_input flex_row_wrap"
-               title="The height at which the bulk of the SO₂ was injected, in km above sea level. The suggested default value is that of the 1991 eruption of Mt. Pinatubo">
+               class="content_model_input flex_row_wrap">
             <label id="so2_height_input_label"
-                   class="input_label">
+                   class="input_label"
+                   title="The height at which the bulk of the SO₂ was injected, in km above sea level. The suggested default value is that of the 1991 eruption of Mt. Pinatubo">
               SO₂ injection height (km a.s.l.)
             </label>
             <input id="so2_height_input_value"
@@ -145,10 +145,10 @@
                class="input_error">
           </div>
           <div id="tropo_height_input"
-               class="content_model_input flex_row_wrap"
-               title="The height of the tropopause at the time and location of the eruption">
+               class="content_model_input flex_row_wrap">
             <label id="tropo_height_input_label"
-                   class="input_label">
+                   class="input_label"
+                   title="The height of the tropopause at the time and location of the eruption">
               Tropopause height at volcano (km a.s.l.)
             </label>
             <input id="tropo_height_input_value"
@@ -168,10 +168,10 @@
         <div id="content_model_inputs_b"
              class="content_model_inputs flex_column flex_grow">
           <div id="aerosol_timescale_input"
-               class="content_model_input flex_row_wrap"
-               title="The characteristic timescale for SO₂ to aerosol conversion in EVA_H. The recommended value of 8 months minimizes the error on EVA_H SAOD prediction in comparison to observations for the period 1979 to 2015, and is appropriate for eruption of Pinatubo-magnitude. For SO₂ injections on the order of 1Tg or less, we recommend using a value of 4 months based on observations for smaller-magnitude eruptions such as the Raikoke 2019 eruption">
+               class="content_model_input flex_row_wrap">
             <label id="aerosol_timescale_input_label"
-                   class="input_label">
+                   class="input_label"
+                   title="The characteristic timescale for SO₂ to aerosol conversion in EVA_H. The recommended value of 8 months minimizes the error on EVA_H SAOD prediction in comparison to observations for the period 1979 to 2015, and is appropriate for eruption of Pinatubo-magnitude. For SO₂ injections on the order of 1Tg or less, we recommend using a value of 4 months based on observations for smaller-magnitude eruptions such as the Raikoke 2019 eruption">
               Aerosol production timescale (months)
             </label>
             <input id="aerosol_timescale_input_value"
@@ -185,10 +185,10 @@
                class="input_error">
           </div>
           <div id="rad_eff_input"
-               class="content_model_input flex_row_wrap"
-               title="Relationship between global-mean volcanic SAOD perturbation and global-mean volcanic effective radiative forcing (ERF in W/m² per unit SAOD change): the factor used to convert the global-mean SAOD at 550nm into a global-mean effective radiative forcing using a linear relationship. The recommended value is that from Schmidt et al. (2018) for Pinatubo-magnitude eruptions. Values found in the literature range from -27 W/m2 to -17 W/m2 depending on the model used for the calculation and eruption characteristics (see Marshall et al., 2020)">
+               class="content_model_input flex_row_wrap">
             <label id="rad_eff_input_label"
-                   class="input_label">
+                   class="input_label"
+                   title="Relationship between global-mean volcanic SAOD perturbation and global-mean volcanic effective radiative forcing (ERF in W/m² per unit SAOD change): the factor used to convert the global-mean SAOD at 550nm into a global-mean effective radiative forcing using a linear relationship. The recommended value is that from Schmidt et al. (2018) for Pinatubo-magnitude eruptions. Values found in the literature range from -27 W/m2 to -17 W/m2 depending on the model used for the calculation and eruption characteristics (see Marshall et al., 2020)">
               Radiative forcing efficiency (W/m² per unit SAOD)
             </label>
             <input id="rad_eff_input_value"
@@ -202,10 +202,10 @@
                class="input_error">
           </div>
           <div id="wavelengths_input"
-               class="content_model_input flex_row_wrap"
-               title="Requested wavelengths for aerosol optical properties outputted in the netcdf file">
+               class="content_model_input flex_row_wrap">
             <label id="wavelengths_input_label"
-                   class="input_label">
+                   class="input_label"
+                   title="Requested wavelengths for aerosol optical properties outputted in the netcdf file">
               Wavelengths (nm)
             </label>
             <div id="wavelengths_inputs">
