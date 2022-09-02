@@ -14,7 +14,7 @@
 
 .input_label {
   background-color: #f7f9fb;
-  min-width: 26em;
+  min-width: 27em;
   padding: 0.5em;
   margin: 0.5em;
 }
@@ -220,6 +220,12 @@
   padding: 0.5em;
   margin: 0.5em;
   cursor: pointer;
+}
+
+@media only screen and (max-width: 800px) {
+  .data_download_button {
+    min-width: 95%;
+  }
 }
 
 .data_download_button:focus,
