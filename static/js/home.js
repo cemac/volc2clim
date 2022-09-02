@@ -84,7 +84,7 @@ var plot_vars = {
   /* fair rf time series plot object: */
   'fair_rf_td_plot': null,
   /* fair rf time series plot variables: */
-  'fair_rf_ts_title': 'Global mean stratospheric aerosol forcing, W/m²',
+  'fair_rf_ts_title': 'Global annual mean<br>stratospheric aerosol forcing, W/m²',
   'fair_rf_ts_x_title': 'Year',
   'fair_rf_ts_y_title': 'Effective radiative forcing at<br>top of atmosphere (W/m²)',
   'fair_rf_ts_col': '#ff7f0e',
@@ -94,7 +94,7 @@ var plot_vars = {
   /* fair temp time series plot object: */
   'fair_temp_td_plot': null,
   /* fair temp time series plot variables: */
-  'fair_temp_ts_title': 'RCP4.5 global mean surface temperature anomaly, K',
+  'fair_temp_ts_title': 'RCP4.5 global annual mean<br>surface temperature anomaly, K',
   'fair_temp_ts_x_title': 'Year',
   'fair_temp_ts_y_title': 'Temperature anomaly (K)',
   'fair_temp_ts_col': '#ff7f0e',
@@ -529,7 +529,7 @@ function plot_data() {
     for (var j = 0; j < saod_ts_scatter_x.length; j++) {
       /* date and saod values for this point: */
       var hover_date = saod_ts_scatter_xlabel[j];
-      var hover_saod = saod_ts_scatter_y[i][j];
+      var hover_saod = saod_ts_scatter_y[i][j].toFixed(3);
       saod_ts_hover[i][j] = 'Date: ' + hover_date + '<br>' + 'SAOD at ' +
                             wavelengths[i] + 'nm: ' + hover_saod;
     };
@@ -596,7 +596,8 @@ function plot_data() {
       'y': 1,
       'xanchor': 'right'
     },
-    'hovermode': 'closest'
+    'hovermode': 'closest',
+    'showlegend': true
   };
   /* saod time series config: */
   var saod_ts_conf = {
@@ -647,7 +648,7 @@ function plot_data() {
       /* values for this point: */
       var hover_date = saod_contour_xlabel[j];
       var hover_lat = saod_contour_y[i];
-      var hover_saod = saod_contour_z[i][j];
+      var hover_saod = saod_contour_z[i][j].toFixed(3);
       /* update min and max values: */
       saod_contour_z_min = Math.min(saod_contour_z_min, hover_saod);
       saod_contour_z_max = Math.max(saod_contour_z_max, hover_saod);
@@ -773,9 +774,9 @@ function plot_data() {
   for (var i = 0; i < fair_rf_ts_scatter_x.length; i++) {
     /* year and rf values for this point: */
     var hover_year_rf = fair_rf_ts_scatter_x[i];
-    var hover_rf = fair_rf_ts_scatter_y[i];
+    var hover_rf = fair_rf_ts_scatter_y[i].toFixed(2);
     var hover_year_rf_wo = fair_rf_wo_ts_scatter_x[i];
-    var hover_rf_wo = fair_rf_wo_ts_scatter_y[i];
+    var hover_rf_wo = fair_rf_wo_ts_scatter_y[i].toFixed(2);
     /* add to hover text: */
     fair_rf_ts_hover[i] = 'Year: ' + hover_year_rf + '<br>' +
                           'Radiative forcing: ' + hover_rf + ' W/m²';
@@ -910,9 +911,9 @@ function plot_data() {
   for (var i = 0; i < fair_temp_ts_scatter_x.length; i++) {
     /* year and temp values for this point: */
     var hover_year_temp = fair_temp_ts_scatter_x[i];
-    var hover_temp = fair_temp_ts_scatter_y[i];
+    var hover_temp = fair_temp_ts_scatter_y[i].toFixed(3);
     var hover_year_temp_wo = fair_temp_wo_ts_scatter_x[i];
-    var hover_temp_wo = fair_temp_wo_ts_scatter_y[i];
+    var hover_temp_wo = fair_temp_wo_ts_scatter_y[i].toFixed(3);
     /* add to hover text: */
     fair_temp_ts_hover[i] = 'Year: ' + hover_year_temp + '<br>' +
                             'Temperature anomaly: ' + hover_temp + ' K';
@@ -1099,7 +1100,8 @@ function display_stats() {
   stats_els['rf_peak_label'].innerHTML = 'Peak monthly global mean radiative forcing:';
   stats_els['rf_peak_value'].innerHTML = rf_peak_value.toFixed(2) +
                                          ' W/m² (' + rf_peak_month + ' ' + rf_peak_year + ')';
-  stats_els['fair_temp_peak_label'].innerHTML = 'Peak annual global mean suface temperature anomaly:';
+  stats_els['fair_temp_peak_label'].innerHTML = 'Peak annual global mean surface temperature anomaly' +
+                                                ' (difference with and without eruption):';
   stats_els['fair_temp_peak_value'].innerHTML = fair_temp_peak_value.toFixed(3) +
                                          ' K (' + fair_temp_peak_date + ')';
   /* vci score background colors: */
@@ -1137,7 +1139,7 @@ function display_stats() {
      vci_value = 1;
   };
   /* update vci html elements: */
-  stats_els['vci_label'].innerHTML = '<a href="https://volcano-climate.github.io/vci/">VCI<a/> value:';
+  stats_els['vci_label'].innerHTML = 'Volcano-Climate Index (<a href="https://volcano-climate.github.io/vci/">VCI<a/>) value:';
   if (vci_value == 'unknown') {
     stats_els['vci_value'].innerHTML = vci_value;
   } else {

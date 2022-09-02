@@ -48,6 +48,43 @@
   border-color: #989898;
 }
 
+.input_info_img {
+  height: 1em;
+  width: 1em;
+  margin-left: 0.3em;
+}
+
+.input_label {
+  position: relative;
+  pointer-events: none;
+}
+
+.input_info {
+  pointer-events: auto;
+}
+
+.input_label:before {
+  content: attr(hover-text);
+  visibility: hidden;
+  position: absolute;
+  display: inline-block;
+  white-space: pre-wrap;
+  left: 0em;
+  top: 2.5em;
+  z-index: 20;
+  color: #393939;
+  background-color: #ffffff;
+  border: 1px solid #a8c0dc;
+  border-radius: 0.25em;
+  padding: 0.25em;
+  width: 40em;
+  max-width: 85vw;
+}
+
+.input_label:hover:before {
+  visibility: visible;
+}
+
 .input_error {
   display: none;
   color: #ee3333;
