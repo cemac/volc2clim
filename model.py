@@ -46,7 +46,8 @@ def check_params(request_params):
             wavelengths_in = request_params['wavelengths']
             # convert from string to list:
             wavelengths_out = [
-                float(i) for i in wavelengths_in.lstrip('[').rstrip(']').split(',')
+                float(i) for i in
+                wavelengths_in.lstrip('[').rstrip(']').split(',')
             ]
             # if 550 is not in the list, add it:
             if 550 not in wavelengths_out:
@@ -57,7 +58,8 @@ def check_params(request_params):
             # store the unique wavelength values:
             user_params['wavelengths'] = np.unique(wavelengths_out)
         except:
-            return False, {}
+            err_msg = 'invalid wavelengths parameter'
+            return False, {}, err_msg
     else:
         # no parameters present. use default values:
         user_params['wavelengths'] = np.array([380, 550, 1020]) / 1000
@@ -82,15 +84,70 @@ def check_params(request_params):
             ])
         # return False on failure:
         except:
-            return False, {}
+            err_msg = 'invalid {} parameter'.format(param_name)
+            return False, {}, err_msg
     # check for optional netcdf flag, presume not:
     user_params['nc'] = False
     if 'nc' in request_params.keys():
         # 1 is True, anything else is False:
         if request_params['nc'] == '1':
             user_params['nc'] = True
+    # check parameter values ... so2_mass:
+    for i in user_params['so2_mass']:
+        if not 0 <= i <= 999999:
+            err_msg = 'so2_mass parameter should not be less than 0'
+            err_msg += ' or greater than 999999 ({0})'.format(i)
+            return False, {}, err_msg
+    # check lat:
+    for i in user_params['lat']:
+        if not -90 <= i <= 90:
+            err_msg = 'lat parameter should not be less than -90'
+            err_msg += ' or greater than 90 ({0})'.format(i)
+            return False, {}, err_msg
+    # check year:
+    for i in user_params['year']:
+        if not 1800 <= i <= 2050:
+            err_msg = 'lat parameter should not be less than 1800'
+            err_msg += ' or greater than 2050 ({0})'.format(i)
+            return False, {}, err_msg
+    # check month:
+    for i in user_params['month']:
+        if not 1 <= i <= 12:
+            err_msg = 'month parameter should not be less than 1'
+            err_msg += ' or greater than 12 ({0})'.format(i)
+            return False, {}, err_msg
+    # check so2_height:
+    for i in user_params['so2_height']:
+        if not 0 <= i <= 50:
+            err_msg = 'so2_height parameter should not be less than 0'
+            err_msg += ' or greater than 50 ({0})'.format(i)
+            return False, {}, err_msg
+    # check tropo_height:
+    for i in user_params['tropo_height']:
+        if not 0 <= i <= 50:
+            err_msg = 'tropo_height parameter should not be less than 0'
+            err_msg += ' or greater than 50 ({0})'.format(i)
+            return False, {}, err_msg
+    # check aerosol_timescale:
+    for i in user_params['aerosol_timescale']:
+        if not 0.1 <= i <= 50:
+            err_msg = 'aerosol_timescale parameter should not be less than 0.1'
+            err_msg += ' or greater than 50 ({0})'.format(i)
+            return False, {}, err_msg
+    # check rad_eff:
+    for i in user_params['rad_eff']:
+        if not -50 <= i <= -0.1:
+            err_msg = 'rad_eff parameter should not be less than -50'
+            err_msg += ' or greater than -0.1 ({0})'.format(i)
+            return False, {}, err_msg
+    # check wavelengths:
+    for i in user_params['wavelengths']:
+        if not 1 <= i * 1000 <= 5000:
+            err_msg = 'wavelength parameter should not be less than 1'
+            err_msg += ' or greater than 5000 ({0})'.format(round(i * 1000))
+            return False, {}, err_msg
     # return the parameters:
-    return True, user_params
+    return True, user_params, None
 
 def data_to_nc(model_dates, model_lats, model_alts, model_wls,
                model_ext, model_ssa, model_asy, model_saod):
@@ -402,12 +459,12 @@ def run_model(eva_h_dir, request_params):
         'data': {}
     }
     # check user parameters:
-    status, user_params = check_params(request_params)
+    status, user_params, err_msg = check_params(request_params)
     # if that failed ... :
     if not status:
         # updata result dict:
         result['status'] = 1
-        result['message'] = 'invalid parameters'
+        result['message'] = err_msg
         # return the result:
         return result
     # try to run the model:

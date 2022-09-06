@@ -286,7 +286,7 @@ function validate_text_input() {
   var aerosol_timescale_error_el = input_els['aerosol_timescale_error'];
   aerosol_timescale_error_el.innerHTML = '';
   /* check value: */
-  var check_value = check_numeric('SO₂ timescale', aerosol_timescale_value, 0.1, 50);
+  var check_value = check_numeric('Aerosol production timescale', aerosol_timescale_value, 0.1, 50);
   /* if o.k., store value: */
   if (check_value['status'] == true) {
     model_params['aerosol_timescale'] = parseFloat(aerosol_timescale_value);
