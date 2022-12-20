@@ -33,7 +33,7 @@ from eva_h.so2injection_8boxes import so2injection_8boxes
 
 def check_params(request_params):
     """
-    Check supplied parameters, convrting values as required
+    Check supplied parameters, converting values as required
 
     :param request_params: POST supplied parameters
     """
