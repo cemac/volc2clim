@@ -417,8 +417,8 @@ def __run_model(eva_h_dir, user_params):
     fair_rf = np.round(fair_rf, 6).tolist()
     fair_temp_wo = np.round(fair_temp_wo, 6).tolist()
     fair_temp = np.round(fair_temp, 6).tolist()
-    # expect wavelengths * 1000 (nm) to be integers:
-    model_wavelengths = np.array(wavelengths * 1000, dtype=int).tolist()
+    # wavelengths * 1000 (nm):
+    model_wavelengths = np.array(wavelengths * 1000).tolist()
     # data dict for output:
     model_data = {
         'time_years': model_time_years,

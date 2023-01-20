@@ -387,7 +387,7 @@ function add_wavelength_input() {
   wavelength_input.classList = 'wavelengths_input_value input_text ' +
                                'input_value_small';
   wavelength_input.type = 'text';
-  wavelength_input.maxLength = 4;
+  wavelength_input.maxLength = 7;
   wavelength_input.name = 'wavelengths' + new_wavelength;
   wavelength_input.value = '550';
   wavelengths_inputs.appendChild(wavelength_input);
