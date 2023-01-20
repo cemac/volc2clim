@@ -1069,17 +1069,24 @@ function display_stats() {
                             '</div>';
   };
   /* additional variables of interest: */
-  var rf_ts = model_data['rf_ts'];
+  var fair_years = model_data['fair_years'];
+  var fair_rf = model_data['fair_rf'];
+  var fair_rf_wo = model_data['fair_rf_wo'];
   var fair_temp = model_data['fair_temp'];
   var fair_temp_wo = model_data['fair_temp_wo'];
-  var fair_year = model_data['fair_years'];
-  /* get the peak rf value: */
-  var rf_peak_value = Math.min.apply(Math, rf_ts);
-  var rf_peak_index = rf_ts.indexOf(rf_peak_value);
-  var rf_peak_date = time_dates[rf_peak_index].substring(0, 7);
-  var rf_peak_year = rf_peak_date.substring(0, 4);
-  var rf_peak_month = rf_peak_date.substring(5, 7);
-  var rf_peak_month = month_labels[parseInt(rf_peak_month) - 1];
+  /* get the peak fair rf value: */
+  var fair_rf_max_diff = -999999;
+  var fair_rf_peak_value = null;
+  var fair_rf_peak_index = null;
+  for (var i = 1; i < fair_rf.length; i++) {
+    var my_diff = Math.abs(fair_rf_wo[i] - fair_rf[i]);
+    if (my_diff > fair_rf_max_diff) {
+      fair_rf_max_diff = my_diff;
+      fair_rf_peak_value = fair_rf[i] - fair_rf_wo[i];
+      fair_rf_peak_index = i;
+    };
+  };
+  var fair_rf_peak_date = fair_years[fair_rf_peak_index];
   /*
    * get peak temperature anomaly value / where there is the max diff between
    * with and without eruption:
@@ -1095,11 +1102,12 @@ function display_stats() {
       fair_temp_peak_index = i;
     };
   };
-  var fair_temp_peak_date = fair_year[fair_temp_peak_index];
+  var fair_temp_peak_date = fair_years[fair_temp_peak_index];
   /* update html elements: */
-  stats_els['rf_peak_label'].innerHTML = 'Peak monthly global mean radiative forcing:';
-  stats_els['rf_peak_value'].innerHTML = rf_peak_value.toFixed(2) +
-                                         ' W/m² (' + rf_peak_month + ' ' + rf_peak_year + ')';
+  stats_els['rf_peak_label'].innerHTML = 'Peak annual global mean radiative forcing' +
+                                         ' (difference with and without eruption):';
+  stats_els['rf_peak_value'].innerHTML = fair_rf_peak_value.toFixed(2) +
+                                         ' W/m² (' + fair_rf_peak_date + ')';
   stats_els['fair_temp_peak_label'].innerHTML = 'Peak annual global mean surface temperature anomaly' +
                                                 ' (difference with and without eruption):';
   stats_els['fair_temp_peak_value'].innerHTML = fair_temp_peak_value.toFixed(3) +
