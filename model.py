@@ -8,6 +8,7 @@ Code to run the EVA_H and FAIR models
 
 # std lib imports:
 import base64 as b64
+from copy import deepcopy
 import datetime
 import sys
 
@@ -258,16 +259,6 @@ def __run_model(eva_h_dir, user_params):
     """
     # init the model parameters:
     model_params = ModelParams()
-    # adjust aerosol timescale to user provided value:
-    model_params.tauprod = np.ones(8) * user_params['aerosol_timescale']
-    # calculate volcanic so2 injections:
-    inmass, intime = so2injection_8boxes(
-        eva_h_dir,
-        model_params.h1lim,
-        model_params.h2lim,
-        model_params.latlim,
-        user_params
-    )
     # model run time in years:
     run_years = 5
     # subtract 1 from month value, so january = 0:
@@ -278,6 +269,28 @@ def __run_model(eva_h_dir, user_params):
     # date:
     start_month = user_params['month'].min()
     tspan = [start_month, start_month + (run_years * 12)]
+    # copy user params, and set so2_mass to 0 for anomaly calculating:
+    user_params_ref = deepcopy(user_params)
+    user_params_ref['so2_mass'] = np.array([0.])
+    user_params_ref['wavelengths'] = np.array([550]) / 1000
+    # adjust aerosol timescale to user provided value:
+    model_params.tauprod = np.ones(8) * user_params['aerosol_timescale']
+    # calculate volcanic so2 injections:
+    inmass, intime = so2injection_8boxes(
+        eva_h_dir,
+        model_params.h1lim,
+        model_params.h2lim,
+        model_params.latlim,
+        user_params
+    )
+    # same again for reference values:
+    inmass_ref, intime_ref = so2injection_8boxes(
+        eva_h_dir,
+        model_params.h1lim,
+        model_params.h2lim,
+        model_params.latlim,
+        user_params_ref
+    )
     # set initial conditions:
     ic = np.array([0.0126,0.0468,0.0152,0.0192,0.0359,0.0218,0.0349,0.0417])
     # init arrays for model dates:
@@ -313,12 +326,26 @@ def __run_model(eva_h_dir, user_params):
         rtol=1e-4, atol=1e-8
     )
     so4_mass = PchipInterpolator(sol.t, sol.y.T, axis=0)(tref)
+    # same again for reference values:
+    sol_ref = solve_ivp(
+        eightboxequations, tspan, ic,
+        args=[inmass_ref, intime_ref, model_params, model_params.backinj],
+        rtol=1e-4, atol=1e-8
+    )
+    so4_mass_ref = PchipInterpolator(sol_ref.t, sol_ref.y.T, axis=0)(tref)
     # list of wavelengths at which output are requested, in um:
     wavelengths = user_params['wavelengths']
     # run the post processing:
     gmsaod, saod, reff, ext, ssa, asy, lat, alt = postproc(
         eva_h_dir, so4_mass, model_params, model_params.mstar,
         model_params.R_reff, wavelengths
+    )
+    # same again for reference values:
+    wavelengths_ref = user_params_ref['wavelengths']
+    (gmsaod_ref, saod_ref, reff_ref, ext_ref, ssa_ref, asy_ref, lat_ref,
+     alt_ref) = postproc(
+        eva_h_dir, so4_mass_ref, model_params, model_params.mstar,
+        model_params.R_reff, wavelengths_ref
     )
     # convert values for json output ..
     # model time in years to 2 decimal places:
@@ -337,12 +364,23 @@ def __run_model(eva_h_dir, user_params):
         model_saod.append(
              np.round((saod[:, :, i]).T, 6).tolist()
         )
+    # same again for reference values:
+    model_saod_ts_ref = []
+    for i in range(wavelengths_ref.size):
+        model_saod_ts_ref.append(
+            np.round(gmsaod_ref[:, i], 6).tolist()
+        )
     # model latitude:
     model_lat = lat.tolist()
     # radiative forcing is model_saod_ts at 550nm multiplied by negative
     # scaling factor (radiative efficiency):
     index_550 = np.where(wavelengths == 0.55)[0][0]
     model_rf = user_params['rad_eff'] * model_saod_ts[index_550]
+    index_550_ref = np.where(wavelengths_ref == 0.55)[0][0]
+    model_rf_ref = user_params['rad_eff'] * model_saod_ts_ref[index_550_ref]
+    # difference between rf for user values and rf values where mass is 0,
+    # i.e. rf anomaly from eva_h, which will be used with fair data:
+    model_rf_anom = model_rf - model_rf_ref
     # get annual global mean rf values for fair. get year for each time step:
     all_model_years = np.array([
         np.floor(i) for i in model_time_years
@@ -356,7 +394,7 @@ def __run_model(eva_h_dir, user_params):
     for model_year in model_years:
         # get mean of all values for this year:
         model_rf_means.append(
-            np.nanmean(model_rf[all_model_years == model_year])
+            np.nanmean(model_rf_anom[all_model_years == model_year])
         )
     # set up volcanic forcing values for fair, using ar5 values.
     # need an array of same size as rcp45 emissions, init as -0.06 background
