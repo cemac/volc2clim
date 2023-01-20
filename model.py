@@ -414,20 +414,28 @@ def __run_model(eva_h_dir, user_params):
     ar5_volcanic[rcp45.Emissions.year == 2015] = -0.17
     # update 2019 for raikoke guess -0.20 w m-2
     ar5_volcanic[rcp45.Emissions.year == 2019] = -0.20
+    # remove 'peaks' from volcanic forcing, to leave just background signal:
+    ar5_volcanic_yr = rcp45.Emissions.year[ar5_volcanic > -0.5]
+    ar5_volcanic_bg = ar5_volcanic[ar5_volcanic > -0.5]
+    ar5_volcanic_bg = np.interp(
+        rcp45.Emissions.year,
+        ar5_volcanic_yr,
+        ar5_volcanic_bg
+    )
     # run fair without eva_h updates:
     fair_result = fair_scm(
         emissions=rcp45.Emissions.emissions,
-        F_volcanic=ar5_volcanic
+        F_volcanic=ar5_volcanic_bg
     )
     forcing_a = fair_result[1]
     temp_a = fair_result[2]
     # update volcanic forcing values with those from eva_h:
     for i, model_year in enumerate(model_years):
-        ar5_volcanic[rcp45.Emissions.year == model_year] += model_rf_means[i]
+        ar5_volcanic_bg[rcp45.Emissions.year == model_year] += model_rf_means[i]
     # run fair with eva_h updates:
     fair_result = fair_scm(
         emissions=rcp45.Emissions.emissions,
-        F_volcanic=ar5_volcanic
+        F_volcanic=ar5_volcanic_bg
     )
     forcing_b = fair_result[1]
     temp_b = fair_result[2]
