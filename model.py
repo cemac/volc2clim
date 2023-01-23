@@ -143,9 +143,9 @@ def check_params(request_params):
             return False, {}, err_msg
     # check wavelengths:
     for i in user_params['wavelengths']:
-        if not 1 <= i * 1000 <= 5000:
+        if not 1 <= i * 1000 <= 100000:
             err_msg = 'wavelength parameter should not be less than 1'
-            err_msg += ' or greater than 5000 ({0})'.format(round(i * 1000))
+            err_msg += ' or greater than 100000 ({0})'.format(round(i * 1000))
             return False, {}, err_msg
     # return the parameters:
     return True, user_params, None

@@ -331,7 +331,7 @@ function validate_text_input() {
   for (var i = 0; i < wavelengths_els.length; i++) {
     var wavelength_value = wavelengths_els[i].value;
     var check_value = check_numeric(
-      'Wavelength', wavelength_value, 1, 5000
+      'Wavelength', wavelength_value, 1, 100000
     );
     /* if o.k., store value: */
     if (check_value['status'] == true) {
