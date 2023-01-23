@@ -419,7 +419,7 @@ def __run_model(eva_h_dir, user_params):
     ar5_volcanic_bg = ar5_volcanic.copy()
     ar5_volcanic_bg[
         (user_params['year'] <= rcp45.Emissions.year) &
-        (rcp45.Emissions.year < user_params['year'] + 3)
+        (rcp45.Emissions.year < user_params['year'] + 4)
     ] = -0.06
     # run fair without eva_h updates:
     fair_result = fair_scm(
