@@ -1,9 +1,9 @@
-FROM python:3.12.4-slim-bookworm
+FROM python:3.12.7-slim-bookworm
 WORKDIR /app
 COPY . .
 RUN pip install --no-cache-dir --upgrade pip
 RUN pip install --no-cache-dir -r requirements.txt
-RUN pip install --no-cache-dir gunicorn==22.0.0
+RUN pip install --no-cache-dir gunicorn==23.0.0
 
 # Create non-root user to run application
 RUN adduser --system --no-create-home flask-runner
