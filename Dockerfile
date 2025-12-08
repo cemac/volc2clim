@@ -1,4 +1,4 @@
-FROM python:3.13.5-slim-bookworm
+FROM python:3.13.10-slim-trixie
 WORKDIR /app
 COPY . .
 RUN pip install --no-cache-dir --upgrade pip
