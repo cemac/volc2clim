@@ -15,7 +15,7 @@ kiwisolver==1.4.9
 MarkupSafe==3.0.3
 matplotlib==3.10.8
 netCDF4==1.7.4  # Primary requirement
-numpy==2.4.2
+numpy==2.3.5
 packaging==26.0
 pandas==3.0.0  # Primary requirement
 pillow==12.1.1
