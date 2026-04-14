@@ -18,7 +18,7 @@ netCDF4==1.7.4  # Primary requirement
 numpy==2.3.5
 packaging==26.0
 pandas==3.0.0  # Primary requirement
-pillow==12.1.1
+pillow==12.2.0
 pyparsing==3.3.2
 python-dateutil==2.9.0.post0
 scipy==1.17.0  # Primary requirement
