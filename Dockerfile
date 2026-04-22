@@ -1,4 +1,6 @@
-FROM python:3.14.3-slim-trixie
+# 3.14.4-slim-trixie
+FROM python@sha256:5c9b9aeee369d854acd666375ebb2a9a45a8ac9d264973bed69dbb28cf48f648
+
 WORKDIR /app
 COPY . .
 RUN pip install --no-cache-dir --upgrade pip
